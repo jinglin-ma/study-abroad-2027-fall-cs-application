@@ -722,6 +722,29 @@
         <div id="schoolCards" class="school-grid" style="margin-top:14px;"></div>
       </section>
 
+      <section id="admissions">
+        <div class="section-head">
+          <div>
+            <h3>官网申请时间与雅思核验表</h3>
+            <p>按当前官网可核验信息整理。2027 尚未发布的学校明确标注“官网尚未公布”，不以往年经验冒充准确日期；点击来源可查看原文。</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>学校</th>
+                <th>官网申请开始/窗口</th>
+                <th>官网录取结果时间</th>
+                <th>官网 IELTS 硬性要求</th>
+                <th>官方来源</th>
+              </tr>
+            </thead>
+            <tbody id="admissionRows"></tbody>
+          </table>
+        </div>
+      </section>
+
       <section id="requirements">
         <div class="section-head">
           <div>
@@ -2734,6 +2757,63 @@
       }
     ];
 
+    // Official admissions verification snapshot. If a university has not published
+    // 2027 dates, the page says so explicitly instead of inferring a date.
+    const verifiedAdmissionInfo = {
+      hku: { open: "2027/28：官网尚未公布；最新官方 2026/27 页面只列截止：2025-12-01 12:00、2026-04-30 12:00，未列开放日。", offer: "官网 FAQ：连续审理，成功申请者在结果准备好后通知；最新 FAQ 以 2026-07-31 为未收到结果的判断节点，2027 节点尚未公布。", ielts: "IELTS Academic 总分≥6.0，单项≥5.5（HKU 高等学位通用要求；项目页未另设更高分数）。", sources: ["https://master.cds.hku.hk/msccs/admission/application-details/", "https://master.cds.hku.hk/msccs/admission/faq/", "https://portal.hku.hk/tpg-admissions/applying/admission-requirements"] },
+      nus: { open: "2027/28：官网尚未公布；最新官方周期 2026/27 为 2025-10-01 开放、2026-01-31 截止。", offer: "官网明确：申请结果通过 Graduate Admission System 于 5 月底前发布。", ielts: "IELTS 最低 6.0；非英语授课背景申请者必须提交 TOEFL/IELTS（官网允许申请豁免但成功机会很低）。", sources: ["https://www.comp.nus.edu.sg/programmes/pg/mcomp-gen/application/", "https://www.comp.nus.edu.sg/programmes/pg/mcs/admissions/", "https://www.comp.nus.edu.sg/programmes/pg/mcs/faq/"] },
+      ntu: { open: "2027/28：官网尚未公布；NTU 官方申请页当前显示 MSc AI/Data Science 最近一轮为 2026-07-01 至 2026-08-31。", offer: "官网未公布固定录取发布日期；按项目审理后通过申请系统/邮件通知。", ielts: "IELTS 6.5（CCDS MSc 课程统一最低标准；非英语授课背景通常需提交）。", sources: ["https://www.ntu.edu.sg/admissions/graduate/cwadmissionguide/apply-now", "https://www.ntu.edu.sg/computing/admissions/graduate-programmes/master-of-science-programmes/frequently-asked-questions", "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-artificial-intelligence"] },
+      cuhk: { open: "2027/28：官网尚未公布具体开放日和截止日；申请程序要求在研究院系统规定 deadline 前提交。", offer: "官网 FAQ：申请结果由研究院在约 4-8 月公布；2027 具体日期未公布。", ielts: "IELTS Academic 总分≥6.5（官网 FAQ/申请程序；英语背景学历可能按政策豁免）。", sources: ["https://msc.cse.cuhk.edu.hk/?lang=en&page_id=142", "https://msc.cse.cuhk.edu.hk/?lang=en&page_id=65", "https://www.gs.cuhk.edu.hk/programmes/engineering/msc-computer-science"] },
+      unsw: { open: "2027 各学期申请已开放；官网未给出一个统一开放时刻，MIT 的截止日期按 Term/项目变化。", offer: "官网采用 postgraduate offer rounds；MIT 没有单一固定放榜日，应按官方 offer-round schedule 对应提交轮次。", ielts: "IELTS Academic 总分≥6.5，单项≥6.0（UNSW postgraduate English standard）。", sources: ["https://www.unsw.edu.au/study/postgraduate/master-of-information-technology?studentType=International", "https://www.unsw.edu.au/study/international-students/admissions-info", "https://www.unsw.edu.au/study/international-students/english-language-requirements"] },
+      melbourne: { open: "2027：2 月入学材料截止 2026-11-30；7 月入学材料截止 2027-05-31。官网说明可在截止日前随时提交，未列统一开放日。", offer: "官网明确：完整材料收到后通常 4-8 周评估；未来 intake 时间可能不同。", ielts: "IELTS Academic 总分≥6.5，单项≥6.0（课程 English language requirements）。", sources: ["https://study.unimelb.edu.au/find/courses/graduate/master-of-information-technology/how-to-apply/", "https://study.unimelb.edu.au/find/courses/graduate/master-of-information-technology/", "https://study.unimelb.edu.au/how-to-apply/graduate-coursework-study/entry-requirements"] },
+      sydney: { open: "2027：官网课程页未列 CS MSc 统一开放/截止日，仅要求按 semester start dates 和国际申请日期页面复核。", offer: "官网未公布 CS MSc 固定录取日；按课程/申请批次审核后通知。", ielts: "工程学院其他 postgraduate coursework 通常 IELTS 总分≥7.0，单项≥6.0；以 2027 课程页最终要求为准。", sources: ["https://www.sydney.edu.au/courses/courses/pc/master-of-computer-science.html", "https://www.sydney.edu.au/content/dam/corporate/documents/about-us/governance-and-structure/academic-board/ab-standards---guidelines-/english-language-proficiency-tables.pdf"] },
+      anu: { open: "2027：官方课程页已发布课程，但未列统一申请开放日/截止日；需按 ANU international application deadlines 复核。", offer: "官网未公布 Master of Computing 固定发 offer 日期；申请按完成材料后审核。", ielts: "ANU 研究生课程常用最低 IELTS 6.5，单项≥6.0；Master of Computing 2027 页面未另列更高分数。", sources: ["https://programsandcourses.anu.edu.au/2027/program/7706xmcomp", "https://www.anu.edu.au/study/apply/english-language-requirements"] },
+      monash: { open: "2027：课程页显示 February 与 July 两个入学期，可直接申请；官网项目页未公布统一开放/截止日。", offer: "官网未公布 Master of AI/Cybersecurity 固定发 offer 日期；按申请完成度和名额审核。", ielts: "Master of Artificial Intelligence 官方：IELTS Academic 总分 6.5，听/读/写/说均≥6.0。", sources: ["https://www.monash.edu/study/courses/find-a-course/artificial-intelligence-c6007?international=true", "https://www.monash.edu/study/courses/find-a-course/cybersecurity-c6002"] },
+      hkust: { open: "2027/28：官网尚未公布；最近官方 2026/27 Fall 页面为 2025-12-01 Round 1、2026-03-01 Round 2 截止。项目采用 rolling admission。", offer: "官网只说明 competitive and rolling；没有固定放榜日，录取结果按审理完成后发出。", ielts: "HKUST taught postgraduate 通常 IELTS Academic 总分≥6.5、单项≥5.5；以具体项目当年研究院要求为准。", sources: ["https://seng.hkust.edu.hk/academics/taught-postgraduate/msc-bdt", "https://seng.hkust.edu.hk/academics/taught-postgraduate/msc-it", "https://fytgs.hkust.edu.hk/admissions/faq"] },
+      edinburgh: { open: "2027/28：官网说明下一轮通常 2026 年 10 月开放；2027-28 具体要求将在 2026-10-01 发布。", offer: "最新官方周期：大多数决定在 deadline 后 8 周内，预计不晚于 5 月 31 日；2027 日期尚未发布。", ielts: "IELTS Academic 总分 7.0，四项均≥6.5。", sources: ["https://study.ed.ac.uk/programmes/postgraduate-taught/110-computer-science", "https://study.ed.ac.uk/programmes/postgraduate-taught/110-computer-science#application"] },
+      kcl: { open: "2027/28：官网项目页未公布固定开放/截止日；通过 King's Apply 提交，竞争项目可能采用 gathered-field 审理。", offer: "官网项目页：部分达到学术要求的申请可能在 2 月后作决定，尽可能在 5 月前通知；不是保证日期。", ielts: "Advanced Computing MSc 为 English Band B：IELTS Academic 总分 7.0，单项≥6.5。", sources: ["https://www.kcl.ac.uk/study/postgraduate-taught/courses/advanced-computing-msc/requirements", "https://www.kcl.ac.uk/study/postgraduate-taught/how-to-apply/entry-requirements/english-language-requirements?entryId=e80aed3d-067b-4b56-b6eb-bd8e36bdc913"] },
+      manchester: { open: "2027：官网尚未发布新一轮 staged admissions 日期；最新官方 2026 轮次首个截止为 2025-11-07。", offer: "最新官方 2026 轮次按阶段公布决定日：2026-01-09、03-06、05-01、06-19；2027 日期未公布。", ielts: "IELTS 总分 7.0，单项不低于 6.5。", sources: ["https://www.manchester.ac.uk/study/masters/courses/list/21573/msc-advanced-computer-science/", "https://www.manchester.ac.uk/study/masters/courses/list/21573/msc-advanced-computer-science/#course-details"] },
+      uq: { open: "2027：官网项目页未列统一开放日/截止日；按 UQ application portal 和 semester intake 页面提交。", offer: "官网未公布 Master of Computer Science 固定 offer 日期；按申请完整度审核。", ielts: "IELTS 总分 6.5，听/读/写/说均≥6.0。", sources: ["https://study.uq.edu.au/study-options/programs/master-computer-science-5522", "https://study.uq.edu.au/study-options/programs/master-computer-science-management-5523"] },
+      imperial: { open: "2027：官网尚未发布 Computing MSc 新周期具体开放日；Imperial 采用分轮/满位关闭机制，热门项目常从前一年秋季开放。", offer: "官网说明按申请轮次在对应 decision date 前给结果；Computing MSc 2027 具体轮次日期尚未公布。", ielts: "Computing MSc 需满足 Imperial standard English requirement；当前项目页显示 IELTS Academic 总分 6.5，单项≥6.0，2027 需复核。", sources: ["https://www.imperial.ac.uk/study/courses/postgraduate-taught/computing/", "https://www.imperial.ac.uk/study/apply/postgraduate-taught/application-process/deadlines/"] },
+      oxford: { open: "2027/28：官网当前显示 2026-27 已关闭，并提示 2027-28 开放时可订阅通知；具体开放日/截止日尚未发布。", offer: "官网未为该 MSc 公布固定放榜日；面试和决定按学院/申请轮次处理，offer 会列明条件与期限。", ielts: "Oxford Higher level：IELTS Academic 总分 7.5，单项≥7.0。", sources: ["https://www.ox.ac.uk/admissions/graduate/courses/msc-advanced-computer-science", "https://www.ox.ac.uk/admissions/graduate/applying-to-oxford/application-guide"] },
+      cambridge: { open: "2027 入学：官网明确 2026-09-09 开放。", offer: "官网未为 ACS 公布统一放榜日；申请按 postgraduate admissions/College 流程审理，需等待申请系统通知。", ielts: "官网课程页要求英语能力；2027 ACS 具体 IELTS 分数需以课程/大学 English requirement 页面为准，当前未在 ACS 页面列出单独分数。", sources: ["https://www.cst.cam.ac.uk/admissions/acs", "https://www.postgraduate.study.cam.ac.uk/courses/directory/cscsmpacs"] },
+      ucl: { open: "2027/28：官网尚未发布新一轮日期；最新官方 2026/27 为 2025-10-20 开放，需签证者 2026-03-27 截止。", offer: "官网未公布 Computer Science MSc 固定发 offer 日期；按申请审理完成后通过系统通知。", ielts: "UCL English Level 2：IELTS Academic 总分 7.0，单项≥6.5。", sources: ["https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/computer-science-msc", "https://www.ucl.ac.uk/study/prospective-students/graduate/how-apply/english-language-requirements"] },
+      polyu: { open: "2027 Sept Entry：官网明确 2026-07-02 开放（页面列出的 programme application starts），Early Round 截止 2026-10-20，Main Round 截止 2027-02-25。", offer: "该项目官网未列固定结果日；按学院审理后通知，不能用通用周数替代。", ielts: "PolyU taught postgraduate 通常 IELTS Academic 总分 6.0（项目页面/招生材料需复核具体 band）。", sources: ["https://www.polyu.edu.hk/study/pg/tpg/2027/61030-fit-pit", "https://www.polyu.edu.hk/gs/prospective-students/how-to-apply/application-deadline/?sc_lang=en"] },
+      cityu: { open: "2027：官网尚未发布新一轮页面；最新官方 2026/27 programme list 显示 2025-09-16 开始招生，MSc CS 截止 2026-05-31 23:59。", offer: "官网：rolling processing，满额前持续审理；通过申请账户查询结果，没有固定发放日。", ielts: "IELTS Academic 总分 6.5（非英语授课背景；CityU 另接受 TOEFL 79/CET-6 450）。", sources: ["https://www.cityu.edu.hk/en/pg/programme/program-list/2026/college-of-computing/department-of-computer-science/p53", "https://www.cityu.edu.hk/pg/taught-postgraduate-programmes/list"] },
+      bristol: { open: "2027：官网申请系统已开放，但 Computer Science Conversion 的具体截止日需以 programme page 为准；学校未给统一开放日。", offer: "官网未公布固定结果日；部分录取受名额和国家/地区批次影响，按申请审理后通知。", ielts: "以 Bristol English Profile 为准；当前项目资料需复核具体 IELTS 数值，不能将规划建议 6.5 当作官网硬线。", sources: ["https://www.bristol.ac.uk/study/postgraduate/taught/msc-computer-science-conversion/", "https://www.bristol.ac.uk/study/postgraduate/apply/when-to-apply/"] },
+      warwick: { open: "2027：官网尚未公布 2027/28 最终截止日；最新官方页面对 2026/27 taught postgraduate 给出 2026-08-02 on-time deadline。", offer: "官网未公布固定放榜日；按课程审理完成后发 offer，晚申请不能保证及时完成。", ielts: "Band A：IELTS Academic 总分 6.5，单项不低于 6.0。", sources: ["https://warwick.ac.uk/study/postgraduate/courses/msc-computer-science/", "https://warwick.ac.uk/study/postgraduate/apply/english/"] },
+      uwa: { open: "2027：官网项目页未公布固定开放/截止日；按 UWA application portal 和 intake 页面提交。", offer: "官网未公布 Master of IT 固定结果日；按材料完整度和 intake 处理。", ielts: "UWA postgraduate coursework 通常 IELTS 总分 6.5，单项≥6.0；2027 项目页需复核。", sources: ["https://www.uwa.edu.au/study/courses/master-of-information-technology", "https://www.uwa.edu.au/study/how-to-apply"] },
+      adelaide: { open: "2027：Adelaide University 官网当前项目/申请页未发布统一开放日和截止日；需按新校区申请系统复核。", offer: "官网未公布 MSc Computer Science 固定 offer 日期。", ielts: "官网当前候选项目页未给出可核验的 2027 IELTS 数值；暂标为官网未公布，不能用旧 Adelaide University 数据代替。", sources: ["https://www.adelaideuni.edu.au/", "https://www.adelaideuni.edu.au/study/how-to-apply/"] },
+      uts: { open: "2027：官网项目页未公布统一开放/截止日；按 UTS international application dates 和 intake 提交。", offer: "官网未公布 Master of IT 固定结果日；按申请完成度/名额通知。", ielts: "UTS postgraduate coursework 通常 IELTS Academic 总分 6.5，单项≥6.0；2027 项目页需复核。", sources: ["https://www.uts.edu.au/study/find-a-course/master-information-technology", "https://www.uts.edu.au/study/international/how-to-apply"] },
+      "eth-zurich": { open: "2027 Autumn：国际本科背景按 ETH 标准窗口申请；官方通用规则为前一年 11 月 1-30 日，2027 programme-specific calendar 尚未单独发布。", offer: "ETH 官网：通常在提交截止后 2-3 个月作出决定；2027 国际申请预计按当年 calendar，具体日未公布。", ielts: "Computer Science MSc 要求 English CEFR C1；ETH 项目页没有把 IELTS 单独写成固定分数，需按认可证书表换算。", sources: ["https://ethz.ch/en/studies/master/application/master-informatik.html", "https://ethz.ch/en/studies/master/application/eth-bachelor/how-to-apply.html", "https://ethz.ch/en/studies/master/application.html"] },
+      epfl: { open: "2027：Computer Science MSc 的具体开放/截止日需以 EPFL 当年 application portal 为准，官网项目页未列统一日期。", offer: "官网项目页未公布 Computer Science MSc 固定结果日；EPFL 以 admissions committee 审核后通知。", ielts: "Computer Science MSc 页面要求英语能力，但未在项目页给出固定 IELTS 数值；不要将 EPFL 其他项目 IELTS 7.0 直接套用。", sources: ["https://www.epfl.ch/education/master/programs/computer-science/", "https://www.epfl.ch/education/admission/admission-2/master-admission-criteria-application/"] },
+      tum: { open: "冬季学期：官方 Informatics 页面固定申请期 02-01 至 05-31；2027/28 的具体学年日期需在 TUMonline/项目页确认。", offer: "官网未公布固定发 offer 日期；完整申请后进入 aptitude assessment，需定期查看 TUMonline。", ielts: "项目要求 English；TUM 不以单一 IELTS 分数概括，须按认可 English certificates/课程规定提交。", sources: ["https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc", "https://www.tum.de/en/studies/application/university-admission/language-certificates"] },
+      "ip-paris": { open: "2027：DataAI major 的当年 call/申请窗口尚未在可核验官方项目页发布。", offer: "官网未公布固定结果日；按 IP Paris/major call 审核，可能包含面试。", ielts: "官方项目页只要求 English proficiency/认可证明，未列统一 IELTS 硬性分数；需以当年 DataAI call 为准。", sources: ["https://www.ip-paris.fr/index.php/en/education/masters/computer-science-program/major-data-and-artificial-intelligence-dataai", "https://www.ip-paris.fr/en/education/admission"] },
+      "tu-delft": { open: "2027：CS MSc 具体开放和截止日需用 TU Delft programme/application page 按国籍复核；当前项目页未给可直接引用的 2027 日期。", offer: "官网未公布固定结果日；按申请文件完整后逐案审核。", ielts: "TU Delft MSc English requirement 通常 IELTS Academic 总分 6.5，单项≥6.0；需以当年 programme admission page 为最终依据。", sources: ["https://ocw.tudelft.nl/programs/master/computer-science/", "https://www.tudelft.nl/en/education/admission-and-application/msc-international-diploma"] },
+      "ku-leuven": { open: "2027：官网尚未发布新一轮截止日；最新 AI programme page 对 2026/27 给出非 EEA 2026-03-01、EEA 2026-06-01。", offer: "官网未公布固定结果日；由 KU Leuven International Admissions/项目委员会审理后通知。", ielts: "项目要求 English proficiency certificate；具体 IELTS 分数需按 KU Leuven Faculty/International Admissions 当年列表确认，项目页未固定写单一分数。", sources: ["https://wms.cs.kuleuven.be/cs/studeren/master-artificial-intelligence/application", "https://www.kuleuven.be/english/apply/education/student"] },
+      uva: { open: "2027：UvA 项目要求先走 Studielink；非 EU/EEA 最近官方 deadline 为 2026-03-01，EU/EEA 为 2026-06-30，2027 日期需待项目页更新。", offer: "官网未公布 Computer Science MSc 固定结果日；申请完成后由 UvA/VU admissions board 通知。", ielts: "该联合项目需按项目 English requirement；UvA 官方范围为 IELTS 6.5-7.0、单项至少 6.0，最终以项目申请页显示为准。", sources: ["https://www.uva.nl/shared-content/programmas/en/masters/computer-science/computer-science.html", "https://www.uva.nl/en/education/admissions/masters/applying-for-a-degree-programme.html"] },
+      trinity: { open: "2027：官网 FAQ 当前显示部分 MSc CS strand 于 2025-11-01 开放；最近一轮其他 strand 截止 2026-06-30，2027 call 尚未发布。", offer: "官网未公布固定发 offer 日期；按提交顺序处理，热门 strand 可能提前满位。", ielts: "Trinity postgraduate taught 通常 IELTS Academic 总分 6.5，单项≥6.0；以 MSc CS 当年申请页为准。", sources: ["https://www.tcd.ie/scss/courses/postgraduate/computer-science/faq/", "https://www.tcd.ie/courses/postgraduate/fees/"] },
+      "paris-saclay": { open: "2027：M2 CNS international 当年 call 尚未发布；上一轮官方项目页曾列 2026-05-01 至 2026-06-15，不能直接当作 2027 日期。", offer: "官网未公布固定结果日；按申请审查/面试后通知。", ielts: "官网以 English level/证明为准，未列统一 IELTS 硬性分数；不能把 IELTS 6.5 当作该项目官网硬线。", sources: ["https://www.universite-paris-saclay.fr/en/education/masters-degree/computer-science/m2-computer-and-network-systems-cns-voie-internationale", "https://www.universite-paris-saclay.fr/en/admission"] },
+      kth: { open: "2027 Autumn：2026-10-16 开放；2027-01-15 截止；2027-02-01 前提交材料/缴费。", offer: "官网明确：2027-04-01 公布录取结果。", ielts: "IELTS overall 6.5（满足 Swedish English 6/Level 2；KTH entry requirements 页面列 overall 6.5）。", sources: ["https://www.kth.se/en/studies/master/computer-science/msc-computer-science-1.419974", "https://www.kth.se/studies/master/computer-science/entry-requirements-computer-science-1.419975"] },
+      uppsala: { open: "2027 Autumn：项目按 Sweden University Admissions 统一周期申请；2027 官方精确开放/截止日需以当年 portal 为准，学校项目页未单独发布。", offer: "官网/统一招生 portal 未在当前项目页固定列出 2027 结果日；以 UniversityAdmissions 当年 selection results 页面为准。", ielts: "English 6/Level 2：IELTS Academic overall 6.5，单项≥5.5。", sources: ["https://www.uu.se/en/study/programme/masters-programme-computer-science", "https://www.universityadmissions.se/en/apply-to-masters/how-to-apply/", "https://www.universityadmissions.se/en/selection-and-admissions-results/when-will-i-get-my-results/"] },
+      polimi: { open: "2027：Polimi 按 School/semester 分轮申请，没有全校统一开放日；官方当年 international call 尚未完整发布。", offer: "官网未公布 Computer Science and Engineering 固定结果日；按 application evaluation 完成后在 portal 更新。", ielts: "需证明 English B2；Polimi要求上传认可英语证明，具体 IELTS 对应分数按当年 English proficiency 表确认。", sources: ["https://dynamicpoli.polimi.it/en/prospective-students/how-to-apply/admission-to-laurea-magistrale/english-language-proficiency", "https://www.polimi.it/en/education/laurea-magistrale-programmes/programme-detail/computer-science-and-engineering"] },
+      copenhagen: { open: "非 EU/EEA/瑞士：官网固定为 2026-11-15 开放、2027-01-15 23:59 截止；EU/EEA 申请门户 2027-01-16 开放、2027-03-01 截止。", offer: "非 EU/EEA/瑞士申请者官网明确：2027-03-13 前回复；EU/EEA 申请者 2027-05-15 前回复。", ielts: "English B：IELTS Academic 总分 6.5，单项≥6.0。", sources: ["https://www.ku.dk/studies/masters/computer-science", "https://www.ku.dk/studies/masters/science-language-requirements", "https://www.ku.dk/studies/masters/application-and-admission/tution-fees-and-scholarships"] },
+      rwth: { open: "2027：Software Systems Engineering 的申请窗口按国籍/学期在 RWTHonline 显示；官网项目页未给单一统一开放日。", offer: "官网未公布固定结果日；需在 RWTHonline 查看审理状态/决定。", ielts: "项目为英语授课，但项目页未单独固定 IELTS 分数；需按 RWTH English proof/考试规定提交，不能用规划建议值替代。", sources: ["https://www.fsmpi.rwth-aachen.de/en/studium/studiengaenge/sse/", "https://www.rwth-aachen.de/cms/root/studium/Vor-dem-Studium/~cgfzv/Kosten-und-Finanzierung/lidx/1/"] },
+      kit: { open: "冬季入学：官网申请窗口通常非 EU 申请者至 06-15，夏季至 01-15；2027 具体窗口需按 KIT application portal 复核。", offer: "官网未公布固定结果日；按申请审查完成后通知。", ielts: "Computer Science MSc 要求 English CEFR B2；KIT 认可证书表中 IELTS 对应值须按当年表提交，项目页未把单一 IELTS 分数列为唯一方式。", sources: ["https://www.sle.kit.edu/english/vorstudium/master-computer-science.php", "https://www.sle.kit.edu/english/imstudium/english_language_requirements.php"] },
+      sapienza: { open: "2027：AI and Robotics 的 pre-selection/application call 尚未发布；需按 Sapienza international admissions calendar 复核。", offer: "官网未公布固定结果日；通过 pre-selection/申请系统通知。", ielts: "项目要求 English 至少 CEFR B2；官方项目页未固定 IELTS 数值，需按认可证书表换算。", sources: ["https://corsidilaurea.uniroma1.it/en/course/33514/organization", "https://www.uniroma1.it/en/pagina/standard-registration-fee-amounts"] },
+      aalto: { open: "2027 Autumn：2026-12-07 至 2027-01-05；官方招生页明确该时间段。", offer: "2027 具体结果日尚未发布；上一轮官方 schedule 为 2026-04-08 发布 admissions results，2027 instructions 将于 2026 秋季更新。", ielts: "Aalto Master’s English requirement：IELTS Academic overall 6.5，Writing 6.0。", sources: ["https://www.aalto.fi/en/study-at-aalto/apply-to-masters-programmes", "https://www.aalto.fi/en/admission-services/language-requirements-in-masters-admissions", "https://www.aalto.fi/en/study-options/machine-learning-data-science-and-artificial-intelligence-master-of-science-technology"] },
+      umac: { open: "2027：官网尚未公布；最新 2026/27 官方指南为 2025-10-03 至 2026-01-02（第一批）、2026-01-03 至 2026-03-13（第二批）。", offer: "官方指南：选择期约 2025-10 至 2026-04，申请结果自 2025-10 起陆续通过系统/邮件通知；2027 日期未公布。", ielts: "UM 研究生英语要求需按 2027 programme/English requirement 核对；当前 Computer Science 指南未给可直接核验的单一 IELTS 硬线。", sources: ["https://grs.um.edu.mo/index.php/prospective-students/master-postgraduate-certificate-diploma-programmes/", "https://grs.um.edu.mo/wp-content/uploads/Master-Admission-Guidelines-26_27-English.pdf", "https://grs.um.edu.mo/wp-content/uploads/English-Requirement-for-Master-2026_27.pdf"] }
+    };
+
+    schoolData.forEach(school => {
+      school.admissions = verifiedAdmissionInfo[school.id] || {
+        open: "官网未公布，需打开学校官方招生页复核。",
+        offer: "官网未公布固定结果日。",
+        ielts: "官网未公布可核验的 IELTS 硬性分数。",
+        sources: [school.website, school.facultyWebsite]
+      };
+    });
+
     const materialItems = [
       { id: "transcript", name: "本科成绩单", time: "1-2 周", note: "中英文版本、教务章、扫描清晰；英澳常需 grading scale。", template: "按学校要求合并 PDF，文件名含姓名和材料类型。" },
       { id: "enrolment", name: "在读证明", time: "3-7 天", note: "应届生必须；毕业后改为毕业证和学位证。", template: "中英文盖章版本。" },
@@ -3006,6 +3086,22 @@
       }).join("");
     }
 
+    function renderAdmissionRows() {
+      const rows = currentProgramsFiltered().map(({ school }) => {
+        const a = school.admissions;
+        return `
+          <tr>
+            <td><b>${school.nameCn}</b><br><span style="color:var(--muted);">${school.nameEn} · ${school.region}</span></td>
+            <td>${a.open}</td>
+            <td>${a.offer}</td>
+            <td>${a.ielts}</td>
+            <td>${(a.sources || []).map((url, i) => `<a href="${url}" target="_blank" rel="noreferrer">官方来源${i + 1}</a>`).join(" / ")}</td>
+          </tr>
+        `;
+      }).join("");
+      document.getElementById("admissionRows").innerHTML = rows || `<tr><td colspan="5">没有匹配院校。</td></tr>`;
+    }
+
     function renderRequirementRows() {
       const rows = currentProgramsFiltered().flatMap(({ school, programs }) => programs.map(p => {
         const r = p.requirements;
@@ -3224,6 +3320,7 @@
     function renderAll() {
       renderDashboard();
       renderSchoolCards();
+      renderAdmissionRows();
       renderRequirementRows();
       renderFeeRows();
       renderEuropeTuition();
@@ -3239,6 +3336,7 @@
       ["searchInput", "regionFilter", "tierFilter", "rankFilter", "trackFilter", "statusFilter"].forEach(id => {
         document.getElementById(id).addEventListener("input", () => {
           renderSchoolCards();
+          renderAdmissionRows();
           renderRequirementRows();
           renderFeeRows();
         });
@@ -3251,6 +3349,7 @@
         document.getElementById("trackFilter").value = "all";
         document.getElementById("statusFilter").value = "all";
         renderSchoolCards();
+        renderAdmissionRows();
         renderRequirementRows();
         renderFeeRows();
       });
