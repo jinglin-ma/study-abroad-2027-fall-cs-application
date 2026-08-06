@@ -34,6 +34,7 @@
       color: var(--ink);
       background: var(--bg);
       line-height: 1.55;
+      overflow-x: hidden;
     }
 
     a { color: var(--blue); text-decoration: none; }
@@ -299,7 +300,7 @@
 
     .school-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
       gap: 14px;
     }
 
@@ -334,6 +335,14 @@
       font-size: 12px;
     }
 
+    .integrated-panel .kv dd,
+    .school-overview .kv dd,
+    .program .kv dd {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
     .school-card .school-overview {
       background: #fbfcfe;
       border: 1px solid var(--line);
@@ -345,6 +354,7 @@
       display: grid;
       gap: 12px;
       padding: 15px;
+      min-width: 0;
     }
 
     .school-card h4 {
@@ -593,6 +603,15 @@
       .split { grid-template-columns: 1fr; }
     }
 
+    @media (max-width: 1200px) {
+      .school-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 900px) {
+      .integrated-grid { grid-template-columns: 1fr; }
+      .integrated-panel .kv { grid-template-columns: 100px minmax(0, 1fr); }
+    }
+
     @media (max-width: 680px) {
       .main { padding: 16px; }
       .topbar { display: grid; }
@@ -602,6 +621,14 @@
       .school-grid {
         grid-template-columns: 1fr;
       }
+      .program-head { display: grid; }
+      .program-head .status-select { width: 100%; }
+      .kv,
+      .integrated-panel .kv {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+      .kv dt { margin-top: 6px; }
       .section-head {
         display: grid;
         align-items: start;
@@ -619,7 +646,6 @@
       </div>
       <nav>
         <a href="#dashboard">总览</a>
-        <a href="#database">欧洲大陆（总库分组）</a>
         <a href="#database">院校数据库</a>
         <a href="#materials">材料清单</a>
         <a href="#writing">文书模板</a>
@@ -725,8 +751,8 @@
       <section id="database">
         <div class="section-head">
           <div>
-            <h3>院校数据库</h3>
-            <p>所有学校的项目、申请要求、官网申请时间、预计录取结果、IELTS 硬性要求和费用估算均已合并在卡片内，并按地区分组；欧洲大陆分组覆盖 QS 2027 前200。</p>
+            <h3>院校数据库（总库）</h3>
+            <p>先看完整院校总库，再用地区、梯度、QS 区间、方向、状态和关键词筛选。欧洲大陆不单独列专题，直接作为总库中的一个地区分组，覆盖 QS 2027 前200。</p>
           </div>
           <button class="primary" id="resetFilters">重置筛选</button>
         </div>
