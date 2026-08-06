@@ -14,7 +14,9 @@
 
 直接用浏览器打开：
 
-`study_abroad_2027_fall_cs_application.html`
+线上访问（推荐）：[打开 2027 Fall CS 留学申请管理页面](https://jinglin-ma.github.io/study-abroad-2027-fall-cs-application/)
+
+本地离线打开：下载仓库后，用浏览器打开 `study_abroad_2027_fall_cs_application.html` 文件。
 
 页面无后端、无数据库，数据和交互逻辑均嵌入 HTML，可离线使用。
 
