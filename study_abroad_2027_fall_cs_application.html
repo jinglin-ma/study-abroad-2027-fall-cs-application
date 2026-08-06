@@ -303,6 +303,44 @@
       gap: 14px;
     }
 
+    .region-group { margin-top: 18px; }
+    .region-group:first-child { margin-top: 14px; }
+    .region-group > .section-head { margin-bottom: 10px; }
+
+    .integrated-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .integrated-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+      background: #fff;
+    }
+
+    .integrated-panel > strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--teal);
+      font-size: 13px;
+    }
+
+    .integrated-panel .kv {
+      grid-template-columns: 88px minmax(0, 1fr);
+      margin-top: 0;
+      font-size: 12px;
+    }
+
+    .school-card .school-overview {
+      background: #fbfcfe;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px;
+    }
+
     .school-card {
       display: grid;
       gap: 12px;
@@ -534,6 +572,8 @@
       background: #fff;
     }
 
+    #europe, #admissions, #requirements, #fees { display: none; }
+
     @media (max-width: 1100px) {
       .app { grid-template-columns: 1fr; }
       aside {
@@ -566,6 +606,7 @@
         display: grid;
         align-items: start;
       }
+      .integrated-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -578,10 +619,8 @@
       </div>
       <nav>
         <a href="#dashboard">总览</a>
-        <a href="#europe">欧洲专题</a>
+        <a href="#database">欧洲大陆（总库分组）</a>
         <a href="#database">院校数据库</a>
-        <a href="#requirements">申请要求</a>
-        <a href="#fees">费用估算</a>
         <a href="#materials">材料清单</a>
         <a href="#writing">文书模板</a>
         <a href="#regions">地区流程</a>
@@ -633,8 +672,8 @@
       <section id="europe">
         <div class="section-head">
           <div>
-            <h3>欧洲大陆：QS 前150 英语授课计算机硕士</h3>
-            <p>本专题排除英国；筛选“欧洲地理范围 + 发达经济体 + QS World University Rankings 2027 综合排名前150 + 英语授课计算机/AI/软件/数据方向”。</p>
+            <h3>欧洲大陆：QS 前200 英语授课计算机硕士</h3>
+            <p>本专题已并入院校数据库的“欧洲大陆”地区分组；排除英国，筛选欧洲发达经济体、QS World University Rankings 2027 综合排名前200及英语授课计算机/AI/软件/数据方向。</p>
           </div>
         </div>
         <div class="notice">
@@ -669,7 +708,7 @@
         <div class="section-head" style="margin-top:18px;">
           <div>
             <h3>欧洲院校官方学费集中表</h3>
-            <p>以下按欧洲大陆 17 所院校集中排列；金额优先采用学校官网 2026/27 或最新公开的项目费用，按中国大陆申请者常见 non-EU/third-country 身份展示。学费与生活费分开，未填固定学费的不做虚假合计。</p>
+            <p>旧版集中表已保留在页面代码中作兼容，但页面展示统一以院校数据库卡片为准：每所学校的项目、申请要求、申请时间、录取结果、IELTS 和费用估算在同一张卡片内查看。</p>
           </div>
         </div>
         <div class="notice">
@@ -687,7 +726,7 @@
         <div class="section-head">
           <div>
             <h3>院校数据库</h3>
-            <p>支持关键词、地区、梯度、QS 区间、方向和申请状态筛选。</p>
+            <p>所有学校的项目、申请要求、官网申请时间、预计录取结果、IELTS 硬性要求和费用估算均已合并在卡片内，并按地区分组；欧洲大陆分组覆盖 QS 2027 前200。</p>
           </div>
           <button class="primary" id="resetFilters">重置筛选</button>
         </div>
@@ -708,7 +747,8 @@
                 <option value="1-30">1-30</option>
                 <option value="31-70">31-70</option>
                 <option value="71-100">71-100</option>
-                <option value="100+">100+</option>
+                <option value="101-200">101-200</option>
+                <option value="200+">200+</option>
               </select>
             </label>
             <label>方向
@@ -957,7 +997,7 @@
     const statusOptions = ["未开始", "准备材料", "已提交", "等待结果", "收到Offer", "拒绝"];
 
     const sourceIndex = [
-      { type: "排名", name: "QS World University Rankings 2027", url: "https://www.topuniversities.com/student-info/choosing-university/worlds-top-100-universities", updated: "2026-07-31", note: "用于 Top100 学校与 QS 2027 综合排名" },
+      { type: "排名", name: "QS World University Rankings 2027", url: "https://www.topuniversities.com/student-info/choosing-university/worlds-top-100-universities", updated: "2026-07-31", note: "用于院校综合排名与 QS 2027 多地区筛选；欧洲大陆另扩展至前200" },
       { type: "排名", name: "University of Macau QS", url: "https://www.topuniversities.com/universities/university-macau", updated: "2026-07-31", note: "澳门大学 QS 2027 为 #267，不在 Top100，但按用户要求单列" },
       { type: "官方项目", name: "HKU MSc Computer Science", url: "https://master.cds.hku.hk/msccs/", updated: "2026-07-31", note: "项目、申请费、链接" },
       { type: "官方项目", name: "HKU MSc Computer Science Application Details", url: "https://master.cds.hku.hk/msccs/admission/application-details/", updated: "2026-07-31", note: "2026/27 学费，2027 需复核" },
@@ -995,7 +1035,7 @@
       { type: "官方项目", name: "Warwick Computer Science MSc", url: "https://warwick.ac.uk/study/postgraduate/courses/msc-computer-science/", updated: "2026-07-31", note: "IELTS 与项目" },
       { type: "官方项目", name: "University of Macau Graduate Admissions", url: "https://grs.um.edu.mo/index.php/prospective-students/master-postgraduate-certificate-diploma-programmes/", updated: "2026-07-31", note: "硕士申请基本要求" },
       { type: "官方指南", name: "University of Macau Admission Guidelines 26/27", url: "https://grs.um.edu.mo/wp-content/uploads/Master-Admission-Guidelines-26_27-English.pdf", updated: "2026-07-31", note: "MSc Computer Science 学制、授课语言、申请费" },
-      { type: "排名", name: "QS World University Rankings 2027", url: "https://www.topuniversities.com/qs-top-uni-wur", updated: "2026-08-05", note: "欧洲院校综合排名口径；英国排除，保留 QS 前150院校" },
+      { type: "排名", name: "QS World University Rankings 2027", url: "https://www.topuniversities.com/qs-top-uni-wur", updated: "2026-08-05", note: "欧洲大陆综合排名口径；英国排除，欧洲分组纳入 QS 前200院校" },
       { type: "官方项目", name: "ETH Zurich MSc Computer Science", url: "https://ethz.ch/en/studies/master/degree-programmes/engineering-sciences/computer-science.html", updated: "2026-08-05", note: "英语授课、120 ECTS、专业方向与先修要求" },
       { type: "官方招生", name: "ETH Zurich MSc application documents and language", url: "https://ethz.ch/en/studies/master/application/master-informatik.html", updated: "2026-08-05", note: "C1 英语、两封推荐信、动机信" },
       { type: "官方项目", name: "EPFL MSc Computer Science", url: "https://www.epfl.ch/education/master/programs/computer-science/", updated: "2026-08-05", note: "英语授课、数学/算法/数据库/编程先修课" },
@@ -1032,6 +1072,15 @@
       ,{ type: "官方费用", name: "KIT study costs", url: "https://www.studienstart.kit.edu/english/financing-part-time-job.php", updated: "2026-08-05", note: "Baden-Württemberg非EU学生 €1500/学期；另有约€184行政/学生服务费用" }
       ,{ type: "官方费用", name: "Sapienza standard registration fees", url: "https://www.uniroma1.it/en/content/standard-registration-fee-amounts", updated: "2026-08-05", note: "国际生按来源国 GDP 组别 €300/€700/€1500/年；2026/27 English programmes页面同样列€300-1500/年" }
       ,{ type: "官方费用", name: "Aalto MLDSAI tuition fees", url: "https://www.aalto.fi/en/study-options/machine-learning-data-science-and-artificial-intelligence-master-of-science-technology", updated: "2026-08-05", note: "Technology field，非EU €17000/学年；两年通常 €34000" }
+      ,{ type: "排名", name: "QS World University Rankings 2027", url: "https://www.topuniversities.com/qs-top-uni-wur", updated: "2026-08-06", note: "欧洲大陆分组扩展为 QS 2027 前200；英国仍单列" }
+      ,{ type: "官方项目", name: "Lund MSc Machine Learning, Systems and Control", url: "https://www.lunduniversity.lu.se/study/machine-learning-systems-and-control-masters-programme-TAMSR", updated: "2026-08-06", note: "英语授课、120 ECTS、先修课与项目学费" }
+      ,{ type: "官方招生", name: "Lund application periods and tuition", url: "https://www.lunduniversity.lu.se/study/admission-degree-studies/applying-studies-when-apply", updated: "2026-08-06", note: "国际硕士主轮、英语证明与学费规则" }
+      ,{ type: "官方项目", name: "DTU MSc Computer Science and Engineering", url: "https://www.dtu.dk/english/education/graduate/msc-programmes/computer-science-and-engineering", updated: "2026-08-06", note: "英语授课、120 ECTS、软件/算法/安全/嵌入式方向" }
+      ,{ type: "官方招生", name: "DTU MSc deadlines and fees", url: "https://www.dtu.dk/english/education/graduate/admission-and-deadlines/application_procedure/apply/submit-application", updated: "2026-08-06", note: "开放日、非 EU 截止、录取结果和申请费" }
+      ,{ type: "官方项目", name: "Aarhus MSc Computer Science", url: "https://masters.au.dk/computerscience", updated: "2026-08-06", note: "全英授课、2027 起 80 ECTS 先修课与方向" }
+      ,{ type: "官方费用", name: "Aarhus Computer Science tuition rates", url: "https://masters.au.dk/tuitionfees/current-tuition-fee-rates", updated: "2026-08-06", note: "2026/27 Computer Science 年学费 EUR 17,300" }
+      ,{ type: "官方项目", name: "University of Helsinki MSc Computer Science", url: "https://www.helsinki.fi/en/degree-programmes/computer-science-masters-programme", updated: "2026-08-06", note: "2027-01-05 至 2027-01-19 申请期、EUR 15,000/年" }
+      ,{ type: "官方招生", name: "University of Helsinki English requirements", url: "https://www.helsinki.fi/en/admissions-and-education/apply-bachelors-and-masters-programmes/apply-international-masters-programmes/proving-your-english-language-skills", updated: "2026-08-06", note: "IELTS Academic 6.5，写作 6.0" }
     ];
 
     function makeReq({ background, gpa, courses, ielts, toefl, pte, gre = "通常不要求，竞争型项目可提交", gmat = "不要求", cross = "视项目而定", research = "加分", internship = "加分" }) {
@@ -2759,6 +2808,165 @@
 
     // Official admissions verification snapshot. If a university has not published
     // 2027 dates, the page says so explicitly instead of inferring a date.
+    schoolData.push(
+      {
+        id: "lund",
+        nameCn: "隆德大学",
+        nameEn: "Lund University",
+        region: "瑞典",
+        qsRank: 71,
+        qsYear: 2027,
+        website: "https://www.lunduniversity.lu.se/",
+        facultyWebsite: "https://www.lth.se/english/",
+        tierNote: "QS 71，欧洲大陆强匹配；机器学习与算法方向适合 CS/数学/工程背景。",
+        programs: [
+          program({
+            id: "lund-mlsc",
+            nameCn: "机器学习、系统与控制理学硕士",
+            nameEn: "MSc Machine Learning, Systems and Control",
+            college: "LTH Faculty of Engineering",
+            link: "https://www.lunduniversity.lu.se/study/machine-learning-systems-and-control-masters-programme-TAMSR",
+            intro: "以机器学习、统计分析、信号处理、图像分析和控制理论处理复杂数据，项目由数学、自动控制、计算机科学和电气信息技术系合作。",
+            tracks: ["Machine Learning", "Artificial Intelligence", "Data Science", "Robotics"],
+            curriculum: "Machine Learning、Monte Carlo、Real-Time Systems、统计推断、图像分析、控制和毕业论文。",
+            duration: "2年 / 120 ECTS",
+            language: "英语",
+            cross: "接受 STEM 背景，但需满足 30 ECTS 数学、统计、编程/计算机科学和控制工程先修课",
+            req: makeReq({
+              background: "科学、技术、工程或数学（STEM）学士或同等学历",
+              gpa: "官网未公布统一 GPA；按学术成绩和动机信择优",
+              courses: "至少 30 ECTS 数学（线性代数、微积分、变换/线性滤波），另需数学统计、编程/计算机科学和控制工程课程",
+              ielts: "IELTS Academic 6.5（瑞典 English 6 等级）",
+              toefl: "TOEFL iBT 90（瑞典 English 6 等级）",
+              pte: "按 University Admissions Sweden 英语证明规则确认",
+              cross: "非 CS 可申请，但 STEM 和数学/编程先修课是硬性匹配项"
+            }),
+            fee: makeFee("SEK", 370000, 120000, 70000, 900, 0, 0, 2, "非 EU/EEA/瑞士；官网当前列全项目 SEK 370,000，第一期 SEK 92,500；生活/住宿为规划估算", "SEK 370,000 / 全项目", "https://www.lunduniversity.lu.se/study/machine-learning-systems-and-control-masters-programme-TAMSR"),
+            sources: ["https://www.lunduniversity.lu.se/study/machine-learning-systems-and-control-masters-programme-TAMSR", "https://www.lunduniversity.lu.se/study/admission-degree-studies/applying-studies-when-apply", "https://www.lunduniversity.lu.se/study/admission-degree-studies/applying-studies-when-apply/tuition-fees"],
+            deadline: "2027 秋季：按瑞典 University Admissions 国际硕士主轮，通常 10 月中旬开放、次年 1 月 15 日截止；以当年 portal 为准",
+            rolling: "非滚动；统一招生结果通常 3 月底至 4 月初"
+          })
+        ]
+      },
+      {
+        id: "dtu",
+        nameCn: "丹麦技术大学",
+        nameEn: "Technical University of Denmark",
+        region: "丹麦",
+        qsRank: 105,
+        qsYear: 2027,
+        website: "https://www.dtu.dk/english",
+        facultyWebsite: "https://www.dtu.dk/english/education/graduate/msc-programmes/computer-science-and-engineering",
+        tierNote: "QS 105，欧洲大陆技术型强匹配；软件、算法、安全、嵌入式和分布式系统方向完整。",
+        programs: [
+          program({
+            id: "dtu-cse",
+            nameCn: "计算机科学与工程理学硕士",
+            nameEn: "MSc Computer Science and Engineering",
+            college: "Department of Applied Mathematics and Computer Science",
+            link: "https://www.dtu.dk/english/education/graduate/msc-programmes/computer-science-and-engineering",
+            intro: "覆盖软件工程、算法与逻辑、计算机安全、分布式与嵌入式系统、数字系统和安全设计。",
+            tracks: ["Computer Science", "Software Engineering", "Cyber Security", "Artificial Intelligence", "Embedded Systems"],
+            curriculum: "120 ECTS，两年制；可选 AI and Algorithms、Computer Security、Cybersecurity、Digital Systems、Embedded and Distributed Systems 等 specialization。",
+            duration: "2年 / 120 ECTS",
+            language: "英语",
+            cross: "需要与项目先修要求相匹配的计算机、数学和工程课程；可提交课程描述/课程匹配表",
+            req: makeReq({
+              background: "相关理工科本科；需按 Computer Science and Engineering prerequisites 逐项匹配",
+              gpa: "官网未公布统一 GPA；按学术资格、课程匹配和名额综合评估",
+              courses: "编程、计算机系统、算法/逻辑、软件工程、计算机网络、安全、数学等，以项目 prerequisites 为准",
+              ielts: "IELTS Academic 6.5（DTU MSc 英语要求）",
+              toefl: "TOEFL iBT 88",
+              pte: "按 DTU 英语证明页面确认",
+              cross: "跨专业风险较高，必须用课程描述证明计算机系统和数学基础"
+            }),
+            fee: makeFee("EUR", 30000, 18000, 9000, 100, 0, 0, 2, "非 EU/EEA/瑞士通常适用；官网列 EUR 7,500/学期、两年 EUR 30,000，另有 EUR 100 申请费；生活/住宿为规划估算", "EUR 7,500 / 学期；两年 EUR 30,000", "https://www.dtu.dk/english/education/graduate/fees-and-funding"),
+            sources: ["https://www.dtu.dk/english/education/graduate/msc-programmes/computer-science-and-engineering", "https://www.dtu.dk/english/education/graduate/admission-and-deadlines/application_procedure/apply/submit-application", "https://www.dtu.dk/english/education/graduate/fees-and-funding", "https://www.dtu.dk/english/education/graduate/fees-and-funding/application_fee"],
+            deadline: "2027 秋季：官网规则为 2026-12-01 开放；非 EU 2027-01-15 截止，EU/EEA 2027-03-01 截止",
+            rolling: "官网列明非 EU 秋季最晚 2027-03-15 给出决定，EU/EEA 最晚 2027-05-15"
+          })
+        ]
+      },
+      {
+        id: "aarhus",
+        nameCn: "奥胡斯大学",
+        nameEn: "Aarhus University",
+        region: "丹麦",
+        qsRank: 128,
+        qsYear: 2027,
+        website: "https://international.au.dk/",
+        facultyWebsite: "https://cs.au.dk/education/",
+        tierNote: "QS 128，欧洲大陆计算机强匹配；2027 起课程学分要求需按新规则准备。",
+        programs: [
+          program({
+            id: "aarhus-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "MSc Computer Science",
+            college: "Department of Computer Science",
+            link: "https://masters.au.dk/computerscience",
+            intro: "全英授课，两年四学期；可选 Cyber Security、Artificial Intelligence、HCI、Software Foundations and Technology。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Cyber Security", "Human-Computer Interaction", "Software Engineering"],
+            curriculum: "第一至三学期选修和方向课程，第四学期完成毕业论文；2027 夏季入学适用新的 80 ECTS 先修结构。",
+            duration: "2年 / 120 ECTS",
+            language: "英语",
+            cross: "国际本科申请者需满足 180 ECTS 学士、计算机/数学/概率统计等 80 ECTS 特定要求",
+            req: makeReq({
+              background: "180 ECTS 学士或同等学历；国际学历需完成项目要求的 CS、数学、概率论和统计课程",
+              gpa: "官网未公布统一 GPA；按成绩、相关课程成绩和 ECTS 比例排序",
+              courses: "2027 起：Programming 20 ECTS、Computer Systems 20 ECTS、Theoretical CS/HCI 20 ECTS、数学/概率/统计 20 ECTS",
+              ielts: "IELTS Academic 6.5（English B 等级）",
+              toefl: "TOEFL iBT 按 Aarhus English B 认可表确认",
+              pte: "按 Aarhus University English language requirements 确认",
+              cross: "非 CS 背景只有在课程逐项满足 80 ECTS 时才值得申请"
+            }),
+            fee: makeFee("EUR", 34600, 15000, 9000, 150, 0, 0, 2, "非 EU/EEA/瑞士；2026/27 Computer Science 年学费 EUR 17,300，申请费 EUR 150；生活/住宿为规划估算", "EUR 17,300 / 年；两年 EUR 34,600", "https://masters.au.dk/tuitionfees/current-tuition-fee-rates"),
+            sources: ["https://masters.au.dk/computerscience", "https://masters.au.dk/deadlines-and-important-dates/timeline-summer-non-eu", "https://masters.au.dk/tuitionfees/current-tuition-fee-rates", "https://masters.au.dk/tuitionfees"],
+            deadline: "2027 秋季：官网时间线为 2026-12-01 开放、2027-01-15 非 EU 截止；语言成绩 2027 起按项目时间线提交",
+            rolling: "非 EU 预计 2027 年 3 月下旬发出录取/拒信；官网 FAQ 称通常 early March，日期可能调整"
+          })
+        ]
+      },
+      {
+        id: "helsinki",
+        nameCn: "赫尔辛基大学",
+        nameEn: "University of Helsinki",
+        region: "芬兰",
+        qsRank: 123,
+        qsYear: 2027,
+        website: "https://www.helsinki.fi/en",
+        facultyWebsite: "https://www.helsinki.fi/en/faculty-science/research/computer-science",
+        tierNote: "QS 123，欧洲大陆研究型强匹配；算法、网络和软件三个方向适合 CS 背景。",
+        programs: [
+          program({
+            id: "helsinki-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "Master's Programme in Computer Science",
+            college: "Faculty of Science / Department of Computer Science",
+            link: "https://www.helsinki.fi/en/degree-programmes/computer-science-masters-programme",
+            intro: "120 ECTS、两年制，国际申请项目聚焦 Algorithms、Networks 和 Software。",
+            tracks: ["Computer Science", "Algorithms", "Networks", "Software Engineering", "Cyber Security"],
+            curriculum: "第一年核心课程，之后在算法、网络和软件方向深化，并完成硕士论文。",
+            duration: "2年 / 120 ECTS",
+            language: "英语授课路径（项目页同时列多语种行政信息）",
+            cross: "需要计算机科学或相关领域学士，并按 Studyinfo admission criteria 核对先修课",
+            req: makeReq({
+              background: "计算机科学或相关领域学士；具体 admission criteria 由 Studyinfo 项目标准执行",
+              gpa: "官网未公布统一 GPA；项目竞争较强，按学术背景和项目要求评估",
+              courses: "算法、数据结构、编程、计算机系统、网络、软件工程、数学/统计等相关先修课",
+              ielts: "IELTS Academic 总分 6.5，写作至少 6.0",
+              toefl: "TOEFL iBT 92，写作至少 22",
+              pte: "按 University of Helsinki accepted language tests 页面确认",
+              cross: "相关背景可申请，但需证明与项目课程匹配"
+            }),
+            fee: makeFee("EUR", 30000, 15000, 9600, 100, 0, 0, 2, "非 EU/EEA；官网项目页列 EUR 15,000/年，国际申请费 EUR 100；生活/住宿为规划估算", "EUR 15,000 / 年；两年 EUR 30,000", "https://www.helsinki.fi/en/degree-programmes/computer-science-masters-programme"),
+            sources: ["https://www.helsinki.fi/en/degree-programmes/computer-science-masters-programme", "https://www.helsinki.fi/en/admissions-and-education/apply-bachelors-and-masters-programmes/apply-international-masters-programmes", "https://www.helsinki.fi/en/admissions-and-education/apply-bachelors-and-masters-programmes/apply-international-masters-programmes/proving-your-english-language-skills", "https://www.helsinki.fi/en/admissions-and-education/admission-services-and-study-guidance"],
+            deadline: "2027 秋季：官网项目页明确 2027-01-05 08:00 开放，2027-01-19 15:00 截止；每年一次入学",
+            rolling: "官网未公布固定发 offer 日期；通常在申请材料审核后于春季发布，按 My Studyinfo/邮件为准"
+          })
+        ]
+      }
+    );
+
     const verifiedAdmissionInfo = {
       hku: { open: "2027/28：官网尚未公布；最新官方 2026/27 页面只列截止：2025-12-01 12:00、2026-04-30 12:00，未列开放日。", offer: "官网 FAQ：连续审理，成功申请者在结果准备好后通知；最新 FAQ 以 2026-07-31 为未收到结果的判断节点，2027 节点尚未公布。", ielts: "IELTS Academic 总分≥6.0，单项≥5.5（HKU 高等学位通用要求；项目页未另设更高分数）。", sources: ["https://master.cds.hku.hk/msccs/admission/application-details/", "https://master.cds.hku.hk/msccs/admission/faq/", "https://portal.hku.hk/tpg-admissions/applying/admission-requirements"] },
       nus: { open: "2027/28：官网尚未公布；最新官方周期 2026/27 为 2025-10-01 开放、2026-01-31 截止。", offer: "官网明确：申请结果通过 Graduate Admission System 于 5 月底前发布。", ielts: "IELTS 最低 6.0；非英语授课背景申请者必须提交 TOEFL/IELTS（官网允许申请豁免但成功机会很低）。", sources: ["https://www.comp.nus.edu.sg/programmes/pg/mcomp-gen/application/", "https://www.comp.nus.edu.sg/programmes/pg/mcs/admissions/", "https://www.comp.nus.edu.sg/programmes/pg/mcs/faq/"] },
@@ -2802,6 +3010,10 @@
       kit: { open: "冬季入学：官网申请窗口通常非 EU 申请者至 06-15，夏季至 01-15；2027 具体窗口需按 KIT application portal 复核。", offer: "官网未公布固定结果日；按申请审查完成后通知。", ielts: "Computer Science MSc 要求 English CEFR B2；KIT 认可证书表中 IELTS 对应值须按当年表提交，项目页未把单一 IELTS 分数列为唯一方式。", sources: ["https://www.sle.kit.edu/english/vorstudium/master-computer-science.php", "https://www.sle.kit.edu/english/imstudium/english_language_requirements.php"] },
       sapienza: { open: "2027：AI and Robotics 的 pre-selection/application call 尚未发布；需按 Sapienza international admissions calendar 复核。", offer: "官网未公布固定结果日；通过 pre-selection/申请系统通知。", ielts: "项目要求 English 至少 CEFR B2；官方项目页未固定 IELTS 数值，需按认可证书表换算。", sources: ["https://corsidilaurea.uniroma1.it/en/course/33514/organization", "https://www.uniroma1.it/en/pagina/standard-registration-fee-amounts"] },
       aalto: { open: "2027 Autumn：2026-12-07 至 2027-01-05；官方招生页明确该时间段。", offer: "2027 具体结果日尚未发布；上一轮官方 schedule 为 2026-04-08 发布 admissions results，2027 instructions 将于 2026 秋季更新。", ielts: "Aalto Master’s English requirement：IELTS Academic overall 6.5，Writing 6.0。", sources: ["https://www.aalto.fi/en/study-at-aalto/apply-to-masters-programmes", "https://www.aalto.fi/en/admission-services/language-requirements-in-masters-admissions", "https://www.aalto.fi/en/study-options/machine-learning-data-science-and-artificial-intelligence-master-of-science-technology"] },
+      lund: { open: "2027 秋季：官网国际硕士主轮通常 10 月中旬开放、次年 1 月 15 日截止；精确日期以 University Admissions Sweden 当年 portal 为准。", offer: "官网费用页说明秋季录取结果通常在 3 月底/4 月初公布，随后生成首期学费账单。", ielts: "IELTS Academic 6.5（瑞典 English 6 等级）。", sources: ["https://www.lunduniversity.lu.se/study/machine-learning-systems-and-control-masters-programme-TAMSR", "https://www.lunduniversity.lu.se/study/admission-degree-studies/applying-studies-when-apply", "https://www.lunduniversity.lu.se/study/admission-degree-studies/applying-studies-when-apply/tuition-fees"] },
+      dtu: { open: "2027 秋季：官网规则为 2026-12-01 开放；非 EU 2027-01-15 截止，EU/EEA 2027-03-01 截止。", offer: "官网列明非 EU 秋季最晚 2027-03-15 给出决定，EU/EEA 最晚 2027-05-15。", ielts: "IELTS 6.5（DTU MSc 英语要求；官网同时列 TOEFL 88、CAE 180）。", sources: ["https://www.dtu.dk/english/education/graduate/msc-programmes/computer-science-and-engineering", "https://www.dtu.dk/english/education/graduate/admission-and-deadlines/application_procedure/apply/submit-application", "https://www.dtu.dk/english/education/graduate/admission-and-deadlines/application_procedure/after-application/further-process"] },
+      aarhus: { open: "2027 秋季：官网时间线为 2026-12-01 开放、2027-01-15 非 EU 截止；官网提示 2027 起语言成绩提交节点有调整。", offer: "非 EU/EEA/瑞士预计 2027 年 3 月下旬收到录取/条件录取/拒信；官网 FAQ 另称通常 early March，日期可能调整。", ielts: "IELTS Academic 6.5（English B 等级；以 Aarhus 当年语言认可表为准）。", sources: ["https://masters.au.dk/computerscience", "https://masters.au.dk/deadlines-and-important-dates/timeline-summer-non-eu", "https://masters.au.dk/how-to-apply/admission-requirements"] },
+      helsinki: { open: "2027 秋季：2027-01-05 08:00 开放，2027-01-19 15:00 截止；官网明确每年只有一次国际硕士申请期。", offer: "官网未公布 Computer Science 2027 固定结果日；按 My Studyinfo/邮件通知，通常在春季发布。", ielts: "IELTS Academic 总分 6.5，写作至少 6.0。", sources: ["https://www.helsinki.fi/en/degree-programmes/computer-science-masters-programme", "https://www.helsinki.fi/en/admissions-and-education/apply-bachelors-and-masters-programmes/apply-international-masters-programmes", "https://www.helsinki.fi/en/admissions-and-education/apply-bachelors-and-masters-programmes/apply-international-masters-programmes/proving-your-english-language-skills"] },
       umac: { open: "2027：官网尚未公布；最新 2026/27 官方指南为 2025-10-03 至 2026-01-02（第一批）、2026-01-03 至 2026-03-13（第二批）。", offer: "官方指南：选择期约 2025-10 至 2026-04，申请结果自 2025-10 起陆续通过系统/邮件通知；2027 日期未公布。", ielts: "UM 研究生英语要求需按 2027 programme/English requirement 核对；当前 Computer Science 指南未给可直接核验的单一 IELTS 硬线。", sources: ["https://grs.um.edu.mo/index.php/prospective-students/master-postgraduate-certificate-diploma-programmes/", "https://grs.um.edu.mo/wp-content/uploads/Master-Admission-Guidelines-26_27-English.pdf", "https://grs.um.edu.mo/wp-content/uploads/English-Requirement-for-Master-2026_27.pdf"] }
     };
 
@@ -2961,7 +3173,8 @@
           (rank === "1-30" && school.qsRank <= 30) ||
           (rank === "31-70" && school.qsRank >= 31 && school.qsRank <= 70) ||
           (rank === "71-100" && school.qsRank >= 71 && school.qsRank <= 100) ||
-          (rank === "100+" && school.qsRank > 100);
+          (rank === "101-200" && school.qsRank >= 101 && school.qsRank <= 200) ||
+          (rank === "200+" && school.qsRank > 200);
         const schoolOk = (region === "all" || school.region === region) &&
           (tier === "all" || schoolTier === tier) &&
           rankOk;
@@ -3006,7 +3219,7 @@
       const submitted = programs.filter(x => ["已提交", "等待结果", "收到Offer", "拒绝"].includes(statusMap[x.program.id])).length;
       const progress = Math.round(((submitted / Math.max(programs.length, 1)) * 0.55 + (materialDone / materialItems.length) * 0.45) * 100);
       const metrics = [
-        ["目标学校数量", schoolData.length, "覆盖 QS Top100 重点地区 + 澳门大学"],
+        ["目标学校数量", schoolData.length, "多地区目标；欧洲大陆覆盖 QS 2027 前200"],
         ["冲刺学校数量", schoolData.filter(s => getTier(s.qsRank).includes("Reach")).length, "QS 1-30"],
         ["主申学校数量", schoolData.filter(s => getTier(s.qsRank).includes("Match")).length, "QS 30-70"],
         ["保底学校数量", schoolData.filter(s => getTier(s.qsRank).includes("Safety")).length, "QS 70-100"],
@@ -3028,6 +3241,11 @@
       `).join("");
     }
 
+    function getRegionGroup(school) {
+      const europeRegions = new Set(["瑞士", "德国", "法国", "荷兰", "比利时", "爱尔兰", "瑞典", "意大利", "丹麦", "芬兰", "挪威"]);
+      return europeRegions.has(school.region) ? "欧洲大陆" : school.region;
+    }
+
     function renderSchoolCards() {
       const statusMap = getStatusMap();
       const data = currentProgramsFiltered();
@@ -3036,54 +3254,122 @@
         el.innerHTML = `<div class="empty">没有匹配结果。请调整关键词或筛选条件。</div>`;
         return;
       }
-      el.innerHTML = data.map(({ school, programs }) => {
-        const tier = getTier(school.qsRank);
+
+      const groups = new Map();
+      data.forEach(item => {
+        const group = getRegionGroup(item.school);
+        if (!groups.has(group)) groups.set(group, []);
+        groups.get(group).push(item);
+      });
+
+      const renderProgram = (school, p) => {
+        const r = p.requirements || {};
+        const f = p.fee || {};
+        const a = school.admissions || {};
+        const rmb = estimateRmb(f);
+        const tuition = f.tuitionText || fmtMoney(f.tuitionTotal, f.currency);
+        const feeSource = f.tuitionSource || (p.sources && p.sources[p.sources.length - 1]) || p.link;
         return `
-          <article class="card school-card">
-            <div>
-              <h4>${school.nameCn}</h4>
-              <p style="margin:4px 0 0;color:var(--muted);">${school.nameEn}</p>
+          <div class="program">
+            <div class="program-head">
+              <div>
+                <h5>${p.nameCn}</h5>
+                <p>${p.nameEn}</p>
+              </div>
+              <select class="status-select" onchange="setProgramStatus('${p.id}', this.value)">
+                ${statusOptions.map(s => `<option value="${s}" ${(statusMap[p.id] || "未开始") === s ? "selected" : ""}>${s}</option>`).join("")}
+              </select>
             </div>
-            <div class="meta">
-              <span class="tag ${tierClass(tier)}">${tier}</span>
-              <span class="tag blue">QS ${school.qsRank} (${school.qsYear})</span>
-              <span class="chip">${school.region}</span>
+            <div class="chips">${p.tracks.map(t => `<span class="chip">${t}</span>`).join("")}</div>
+            <dl class="kv">
+              <dt>学院</dt><dd>${p.college}</dd>
+              <dt>项目介绍</dt><dd>${p.intro}</dd>
+              <dt>培养方向</dt><dd>${p.tracks.join(" / ")}</dd>
+              <dt>课程设置</dt><dd>${p.curriculum}</dd>
+              <dt>学制/授课</dt><dd>${p.duration}；${p.language}</dd>
+              <dt>跨专业</dt><dd>${p.crossMajor}</dd>
+              <dt>科研/实习</dt><dd>科研：${p.research}；实习：${p.internship}</dd>
+            </dl>
+            <div class="integrated-grid">
+              <div class="integrated-panel">
+                <strong>申请要求（项目官网字段）</strong>
+                <dl class="kv">
+                  <dt>背景</dt><dd>${r.background}</dd>
+                  <dt>成绩</dt><dd>${r.minGpa}</dd>
+                  <dt>先修课</dt><dd>${r.courses}</dd>
+                  <dt>数学</dt><dd>${r.math}</dd>
+                  <dt>编程</dt><dd>${r.programming}</dd>
+                  <dt>IELTS</dt><dd>${r.ielts}</dd>
+                  <dt>TOEFL/PTE</dt><dd>${r.toefl}；${r.pte}</dd>
+                  <dt>GRE/GMAT</dt><dd>${r.gre}；${r.gmat}</dd>
+                  <dt>豁免/跨专业</dt><dd>${r.waiver}；${r.cross}</dd>
+                </dl>
+              </div>
+              <div class="integrated-panel">
+                <strong>费用估算（官网费用 + 规划预算）</strong>
+                <dl class="kv">
+                  <dt>学费</dt><dd>${tuition}</dd>
+                  <dt>学制</dt><dd>${f.durationYears || p.duration}</dd>
+                  <dt>生活费</dt><dd>${fmtMoney(f.livingAnnual, f.currency)} / 年</dd>
+                  <dt>住宿费</dt><dd>${fmtMoney(f.accommodationAnnual, f.currency)} / 年</dd>
+                  <dt>申请/签证</dt><dd>${fmtMoney(f.applicationFee, f.currency)} / ${fmtMoney(f.visaFee, f.currency)}</dd>
+                  <dt>保险</dt><dd>${fmtMoney(f.insuranceAnnual, f.currency)} / 年</dd>
+                  <dt>人民币预算</dt><dd>${rmb === null ? "需复核：官网未给固定总学费" : `约 RMB ${rmb.toLocaleString("zh-CN")}`}</dd>
+                  <dt>费用备注</dt><dd>${f.note || "以官网当年 fee schedule 为准"}</dd>
+                  <dt>费用来源</dt><dd><a href="${feeSource}" target="_blank" rel="noreferrer">打开官方费用页</a></dd>
+                </dl>
+              </div>
             </div>
-            <div class="kv">
-              <dt>官网</dt><dd><a href="${school.website}" target="_blank" rel="noreferrer">学校官网</a> / <a href="${school.facultyWebsite}" target="_blank" rel="noreferrer">学院官网</a></dd>
-              <dt>申请建议</dt><dd>${school.tierNote}</dd>
-            </div>
-            <div class="program-list">
-              ${programs.map(p => `
-                <div class="program">
-                  <div class="program-head">
-                    <div>
-                      <h5>${p.nameCn}</h5>
-                      <p>${p.nameEn}</p>
-                    </div>
-                    <select class="status-select" onchange="setProgramStatus('${p.id}', this.value)">
-                      ${statusOptions.map(s => `<option value="${s}" ${(statusMap[p.id] || "未开始") === s ? "selected" : ""}>${s}</option>`).join("")}
-                    </select>
-                  </div>
-                  <div class="chips">${p.tracks.map(t => `<span class="chip">${t}</span>`).join("")}</div>
-                  <dl class="kv">
-                    <dt>学院</dt><dd>${p.college}</dd>
-                    <dt>介绍</dt><dd>${p.intro}</dd>
-                    <dt>培养方向</dt><dd>${p.tracks.join(" / ")}</dd>
-                    <dt>课程设置</dt><dd>${p.curriculum}</dd>
-                    <dt>学制</dt><dd>${p.duration}</dd>
-                    <dt>语言</dt><dd>${p.language}</dd>
-                    <dt>跨专业</dt><dd>${p.crossMajor}</dd>
-                    <dt>GRE/GMAT</dt><dd>${p.gre}；${p.gmat}</dd>
-                    <dt>科研/实习</dt><dd>科研：${p.research}；实习：${p.internship}</dd>
-                    <dt>项目链接</dt><dd><a href="${p.link}" target="_blank" rel="noreferrer">打开官方项目页</a></dd>
-                  </dl>
-                </div>
-              `).join("")}
-            </div>
-          </article>
+            <dl class="kv">
+              <dt>项目官网</dt><dd><a href="${p.link}" target="_blank" rel="noreferrer">打开官方项目页</a></dd>
+            </dl>
+          </div>
         `;
-      }).join("");
+      };
+
+      el.innerHTML = [...groups.entries()].map(([region, items]) => `
+        <section class="region-group">
+          <div class="section-head">
+            <div>
+              <h3>${region}</h3>
+              <p>${region === "欧洲大陆" ? "欧洲发达国家；英国单列；本组纳入 QS 2027 前200的英语授课计算机类硕士。" : "本地区院校的项目、申请要求、时间和费用统一收纳在学校卡片中。"}</p>
+            </div>
+            <span class="tag ${region === "欧洲大陆" ? "teal" : "blue"}">${items.length} 所院校</span>
+          </div>
+          <div class="school-grid">
+            ${items.map(({ school, programs }) => {
+              const tier = getTier(school.qsRank);
+              const a = school.admissions || {};
+              return `
+                <article class="card school-card">
+                  <div>
+                    <h4>${school.nameCn}</h4>
+                    <p style="margin:4px 0 0;color:var(--muted);">${school.nameEn}</p>
+                  </div>
+                  <div class="meta">
+                    <span class="tag ${tierClass(tier)}">${tier}</span>
+                    <span class="tag blue">QS ${school.qsRank} (${school.qsYear})</span>
+                    <span class="chip">${school.region}</span>
+                  </div>
+                  <div class="school-overview">
+                    <dl class="kv">
+                      <dt>官网</dt><dd><a href="${school.website}" target="_blank" rel="noreferrer">学校官网</a> / <a href="${school.facultyWebsite}" target="_blank" rel="noreferrer">学院官网</a></dd>
+                      <dt>申请建议</dt><dd>${school.tierNote}</dd>
+                      <dt>申请窗口</dt><dd>${a.open}</dd>
+                      <dt>预计录取</dt><dd>${a.offer}</dd>
+                      <dt>IELTS 硬线</dt><dd>${a.ielts}</dd>
+                      <dt>时间来源</dt><dd>${(a.sources || []).map((url, i) => `<a href="${url}" target="_blank" rel="noreferrer">官方${i + 1}</a>`).join(" / ")}</dd>
+                    </dl>
+                  </div>
+                  <div class="program-list">
+                    ${programs.map(p => renderProgram(school, p)).join("")}
+                  </div>
+                </article>
+              `;
+            }).join("")}
+          </div>
+        </section>
+      `).join("");
     }
 
     function renderAdmissionRows() {
