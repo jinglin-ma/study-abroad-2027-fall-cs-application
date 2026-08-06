@@ -1,0 +1,3272 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>27 Fall 计算机类硕士 DIY 留学申请管理系统</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --panel: #ffffff;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #e4e7ec;
+      --teal: #0f766e;
+      --teal-soft: #d9f4ef;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --coral: #dc5a41;
+      --coral-soft: #ffe5de;
+      --amber: #b7791f;
+      --amber-soft: #fff2cc;
+      --green: #17803d;
+      --green-soft: #dcfce7;
+      --slate: #344054;
+      --shadow: 0 12px 30px rgba(16, 24, 40, 0.08);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+    }
+
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 22px 18px;
+      background: #ffffff;
+      border-right: 1px solid var(--line);
+      overflow-y: auto;
+    }
+
+    .brand {
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand h1 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      color: var(--slate);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    nav a:hover {
+      background: #f2f4f7;
+      text-decoration: none;
+    }
+
+    .main {
+      min-width: 0;
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .topbar h2 {
+      margin: 0 0 6px;
+      font-size: clamp(24px, 4vw, 34px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .topbar p {
+      max-width: 980px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .tagrow, .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag, .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--slate);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag.teal { background: var(--teal-soft); color: var(--teal); border-color: #b7e5dc; }
+    .tag.blue { background: var(--blue-soft); color: var(--blue); border-color: #bad3ff; }
+    .tag.coral { background: var(--coral-soft); color: var(--coral); border-color: #ffc6b8; }
+    .tag.amber { background: var(--amber-soft); color: var(--amber); border-color: #f7d77f; }
+    .tag.green { background: var(--green-soft); color: var(--green); border-color: #b7efc4; }
+
+    section {
+      margin: 22px 0;
+      scroll-margin-top: 18px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .card.pad { padding: 16px; }
+    .metric {
+      display: grid;
+      gap: 6px;
+      min-height: 104px;
+    }
+
+    .metric b {
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .notice {
+      border-left: 4px solid var(--amber);
+      background: #fff9e8;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      color: #68480f;
+      font-size: 14px;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(150px, 1fr));
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .time-node {
+      min-width: 150px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: #fff;
+    }
+
+    .time-node strong {
+      display: block;
+      color: var(--teal);
+      margin-bottom: 6px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(220px, 2fr) repeat(5, minmax(140px, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    input, select, textarea, button {
+      font: inherit;
+    }
+
+    label {
+      display: grid;
+      gap: 5px;
+      color: var(--slate);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid #cfd6e0;
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    button {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 8px 12px;
+      background: #fff;
+      color: var(--slate);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+    }
+
+    button:hover { filter: brightness(0.98); }
+
+    .school-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 14px;
+    }
+
+    .school-card {
+      display: grid;
+      gap: 12px;
+      padding: 15px;
+    }
+
+    .school-card h4 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    .school-card .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .program-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .program {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: #fbfcfe;
+    }
+
+    .program-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 8px;
+    }
+
+    .program h5 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    .program p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 6px 10px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    .kv dt {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .kv dd {
+      margin: 0;
+      min-width: 0;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      min-width: 1060px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #f9fafb;
+      color: #475467;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .status-select {
+      min-width: 112px;
+      min-height: 34px;
+      padding: 5px 7px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 14px;
+    }
+
+    .template {
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius);
+      padding: 13px;
+      background: #fff;
+    }
+
+    .template h4 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .template ol, .template ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .template li { margin: 5px 0; }
+
+    .checklist {
+      display: grid;
+      gap: 9px;
+    }
+
+    .checkitem {
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr);
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .checkitem input {
+      width: 18px;
+      min-height: 18px;
+      margin-top: 2px;
+    }
+
+    .checkitem b {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .checkitem span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .analysis-box {
+      display: grid;
+      gap: 9px;
+      align-content: start;
+    }
+
+    .score {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px;
+      border-radius: var(--radius);
+      background: #eef8f6;
+      border: 1px solid #c6ece4;
+    }
+
+    .score b {
+      font-size: 30px;
+      color: var(--teal);
+    }
+
+    .risk {
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 14px;
+    }
+
+    .risk.warn {
+      border-color: #fed7aa;
+      background: #fff7ed;
+      color: #9a3412;
+    }
+
+    .risk.ok {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .footer {
+      margin: 30px 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .empty {
+      padding: 22px;
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: #fff;
+    }
+
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 1fr; }
+      aside {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      nav {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      }
+      .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .grid.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid.cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .split { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .main { padding: 16px; }
+      .topbar { display: grid; }
+      .filters, .profile-grid, .grid.cols-2, .grid.cols-3, .grid.cols-4 {
+        grid-template-columns: 1fr;
+      }
+      .school-grid {
+        grid-template-columns: 1fr;
+      }
+      .section-head {
+        display: grid;
+        align-items: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <h1>27 Fall CS 申请库</h1>
+        <p>DIY 选校、材料、费用、进度一体化管理</p>
+      </div>
+      <nav>
+        <a href="#dashboard">总览</a>
+        <a href="#europe">欧洲专题</a>
+        <a href="#database">院校数据库</a>
+        <a href="#requirements">申请要求</a>
+        <a href="#fees">费用估算</a>
+        <a href="#materials">材料清单</a>
+        <a href="#writing">文书模板</a>
+        <a href="#regions">地区流程</a>
+        <a href="#timeline">时间规划</a>
+        <a href="#profile">个人背景</a>
+        <a href="#sources">数据来源</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h2>27 Fall 计算机类硕士 DIY 留学申请管理系统</h2>
+          <p>覆盖 Computer Science、AI、Machine Learning、Software Engineering、Data Science、Cyber Security 等方向。数据以官方页面为主，2027 intake 未公布的信息保留复核标记。</p>
+        </div>
+        <div class="tagrow">
+          <span class="tag teal">2027 Fall</span>
+          <span class="tag blue">QS 2027</span>
+          <span class="tag amber">单文件 HTML</span>
+        </div>
+      </div>
+
+      <section id="dashboard">
+        <div class="section-head">
+          <div>
+            <h3>Dashboard</h3>
+            <p>目标、进度、学校梯度和申请季节奏。</p>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card pad">
+            <h4>我的申请目标</h4>
+            <div class="chips" id="goalChips"></div>
+          </div>
+          <div class="notice">
+            页面内人民币换算使用规划汇率，可在代码 `exchangeRates` 中调整。费用、截止日期和语言要求每年会变动，提交申请前必须回到官方页面复核。
+          </div>
+        </div>
+        <div class="grid cols-4" id="metrics" style="margin-top:14px;"></div>
+        <div class="section-head" style="margin-top:18px;">
+          <div>
+            <h3>申请时间轴</h3>
+            <p>从背景提升到入学准备的关键阶段。</p>
+          </div>
+        </div>
+        <div class="timeline" id="heroTimeline"></div>
+      </section>
+
+      <section id="europe">
+        <div class="section-head">
+          <div>
+            <h3>欧洲大陆：QS 前150 英语授课计算机硕士</h3>
+            <p>本专题排除英国；筛选“欧洲地理范围 + 发达经济体 + QS World University Rankings 2027 综合排名前150 + 英语授课计算机/AI/软件/数据方向”。</p>
+          </div>
+        </div>
+        <div class="notice">
+          <b>使用口径：</b>QS 是学校综合排名，不是计算机学科排名；项目是否全英授课、先修课、GRE、语言和截止日期按项目官网逐项核验。当前页面记录的是 2027 Fall 规划版，若 2027 页面尚未开放，保留上一轮官方信息并标注“需复核”。
+        </div>
+        <div class="grid cols-3" style="margin-top:14px;">
+          <div class="card pad">
+            <h4>优先冲刺</h4>
+            <p>ETH Zurich、EPFL、TUM、IP Paris、TU Delft、KU Leuven、UvA。典型特点是专业匹配、数学/算法要求高，部分项目要求 GRE 或课程逐项比对。</p>
+          </div>
+          <div class="card pad">
+            <h4>主申与强匹配</h4>
+            <p>KTH、Uppsala、Polimi、Trinity、University of Copenhagen、Paris-Saclay、RWTH。北欧和荷兰项目常按 ECTS 先修课硬筛，爱尔兰/意大利更看学位等级与专业匹配。</p>
+          </div>
+          <div class="card pad">
+            <h4>费用与材料提醒</h4>
+            <p>德国公立项目常按州/国籍收取学费或学期费；瑞士、北欧、荷兰、法国项目规则差异较大。成绩单、课程描述、英语证明、CV、动机信和推荐信应提前准备。</p>
+          </div>
+        </div>
+        <div class="table-wrap" style="margin-top:14px;">
+          <table>
+            <thead><tr><th>国家/地区</th><th>申请机制</th><th>最容易踩坑的要求</th><th>典型时间</th></tr></thead>
+            <tbody>
+              <tr><td>德国</td><td>学校网申；部分项目 uni-assist / VPD</td><td>课程学分逐项匹配；TUM 对中国等国家申请者要求 GRE/APS；KIT/RWTH 有明确学分门槛</td><td>冬季学期通常前一年末至当年春夏，逐校复核</td></tr>
+              <tr><td>瑞士</td><td>学校自有系统</td><td>ETH/EPFL 偏好优秀成绩和强 CS 数学基础；语言证明需在截止日前到位</td><td>通常秋季入学，申请窗口较早</td></tr>
+              <tr><td>荷兰</td><td>Studielink + 学校系统</td><td>研究型本科背景、课程等价性、先修课和截止日期；非 EU 申请应尽早</td><td>常见 12 月至次年 1 月/春季截止</td></tr>
+              <tr><td>北欧</td><td>多通过 national admissions portal</td><td>ECTS 分布和英语等级是硬条件；学费对非 EU/EEA/瑞士申请者适用</td><td>多数 10 月开放，1 月截止</td></tr>
+              <tr><td>法国/意大利/爱尔兰</td><td>学校/国家平台并行</td><td>项目可能是 M1/M2 或 track；意大利常做课程与学分审查，爱尔兰常看 2.1 等级和编程能力</td><td>按项目 call、轮次和签证节点复核</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="section-head" style="margin-top:18px;">
+          <div>
+            <h3>欧洲院校官方学费集中表</h3>
+            <p>以下按欧洲大陆 17 所院校集中排列；金额优先采用学校官网 2026/27 或最新公开的项目费用，按中国大陆申请者常见 non-EU/third-country 身份展示。学费与生活费分开，未填固定学费的不做虚假合计。</p>
+          </div>
+        </div>
+        <div class="notice">
+          <b>读表说明：</b>“项目总学费”只在官网给出固定项目金额，或可按官网明确的学期/学年金额直接相乘时填写；“官方规则/备注”保留身份、学分、减免、注册费和 semester fee 等条件。RMB 预算不把官网未固定的 tuition 自动估算进去。
+        </div>
+        <div class="table-wrap" style="margin-top:14px;">
+          <table>
+            <thead><tr><th>国家</th><th>学校 / QS</th><th>英语授课项目</th><th>官网学费（原币）</th><th>项目总学费</th><th>官方规则与附加费用</th><th>费用官网</th></tr></thead>
+            <tbody id="europeTuitionRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="database">
+        <div class="section-head">
+          <div>
+            <h3>院校数据库</h3>
+            <p>支持关键词、地区、梯度、QS 区间、方向和申请状态筛选。</p>
+          </div>
+          <button class="primary" id="resetFilters">重置筛选</button>
+        </div>
+        <div class="card pad">
+          <div class="filters">
+            <label>搜索
+              <input id="searchInput" type="search" placeholder="学校 / 专业 / 学院 / 方向">
+            </label>
+            <label>地区
+              <select id="regionFilter"></select>
+            </label>
+            <label>梯度
+              <select id="tierFilter"></select>
+            </label>
+            <label>QS 排名
+              <select id="rankFilter">
+                <option value="all">全部</option>
+                <option value="1-30">1-30</option>
+                <option value="31-70">31-70</option>
+                <option value="71-100">71-100</option>
+                <option value="100+">100+</option>
+              </select>
+            </label>
+            <label>方向
+              <select id="trackFilter"></select>
+            </label>
+            <label>状态
+              <select id="statusFilter"></select>
+            </label>
+          </div>
+        </div>
+        <div id="schoolCards" class="school-grid" style="margin-top:14px;"></div>
+      </section>
+
+      <section id="requirements">
+        <div class="section-head">
+          <div>
+            <h3>申请要求数据库</h3>
+            <p>核心学术与英语要求。带“需复核”的项目建议打开官方页面确认 2027 intake。</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>学校</th>
+                <th>专业</th>
+                <th>本科背景</th>
+                <th>GPA / 均分</th>
+                <th>课程要求</th>
+                <th>IELTS</th>
+                <th>TOEFL / PTE</th>
+                <th>GRE / GMAT</th>
+                <th>跨专业</th>
+              </tr>
+            </thead>
+            <tbody id="requirementsRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="fees">
+        <div class="section-head">
+          <div>
+            <h3>费用信息</h3>
+            <p>学费、生活费、申请费、签证和保险费用统一换算为人民币规划估算。</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>学校</th>
+                <th>项目</th>
+                <th>币种</th>
+                <th>总学费</th>
+                <th>年生活费</th>
+                <th>住宿估算</th>
+                <th>申请费</th>
+                <th>签证/保险</th>
+                <th>人民币总估算</th>
+              </tr>
+            </thead>
+            <tbody id="feeRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="materials">
+        <div class="section-head">
+          <div>
+            <h3>申请材料清单</h3>
+            <p>长期维护用 checklist，勾选状态保存在本机浏览器。</p>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card pad">
+            <h4>必须材料</h4>
+            <div class="checklist" id="materialChecklist"></div>
+          </div>
+          <div class="card pad">
+            <h4>材料准备建议</h4>
+            <div id="materialTips"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="writing">
+        <div class="section-head">
+          <div>
+            <h3>文书准备模块</h3>
+            <p>Computer Science 方向 PS、CV、推荐信结构库。</p>
+          </div>
+        </div>
+        <div class="grid cols-3" id="writingTemplates"></div>
+      </section>
+
+      <section id="regions">
+        <div class="section-head">
+          <div>
+            <h3>地区专项申请流程</h3>
+            <p>按香港、新加坡、英国、澳大利亚、澳门拆分流程与风险点。</p>
+          </div>
+        </div>
+        <div class="grid cols-3" id="regionCards"></div>
+      </section>
+
+      <section id="timeline">
+        <div class="section-head">
+          <div>
+            <h3>27 Fall 时间规划</h3>
+            <p>从 2026 年 7 月到 2027 年 8 月的执行清单。</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>月份</th>
+                <th>核心任务</th>
+                <th>产出物</th>
+                <th>风险控制</th>
+              </tr>
+            </thead>
+            <tbody id="timelineRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="profile">
+        <div class="section-head">
+          <div>
+            <h3>个人背景输入与竞争力分析</h3>
+            <p>填写后自动生成申请竞争力、风险提示和梯度建议，数据保存在本机浏览器。</p>
+          </div>
+          <button class="primary" id="saveProfile">保存背景</button>
+        </div>
+        <div class="split">
+          <div class="card pad">
+            <div class="profile-grid">
+              <label>本科院校
+                <input id="profileSchool" placeholder="例如：某 985 / 211 / 双非">
+              </label>
+              <label>本科专业
+                <input id="profileMajor" placeholder="例如：软件工程">
+              </label>
+              <label>GPA / 均分
+                <input id="profileGpa" type="number" step="0.01" placeholder="例如：3.5 或 85">
+              </label>
+              <label>排名
+                <input id="profileRank" placeholder="例如：前 15%">
+              </label>
+              <label>IELTS
+                <input id="profileIelts" type="number" step="0.5" placeholder="例如：6.5">
+              </label>
+              <label>TOEFL
+                <input id="profileToefl" type="number" step="1" placeholder="例如：95">
+              </label>
+            </div>
+            <label style="margin-top:10px;">科研经历
+              <textarea id="profileResearch" placeholder="项目、导师、论文、研究方向"></textarea>
+            </label>
+            <label style="margin-top:10px;">论文 / 竞赛 / 实习 / 项目
+              <textarea id="profileExperience" placeholder="分条记录最有含金量的经历"></textarea>
+            </label>
+          </div>
+          <div class="analysis-box" id="profileAnalysis"></div>
+        </div>
+      </section>
+
+      <section id="sources">
+        <div class="section-head">
+          <div>
+            <h3>数据来源与更新</h3>
+            <p>优先官方招生页面、学院官网、handbook、fee schedule；营销机构和经验帖不作为数据依据。</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>类别</th>
+                <th>学校/机构</th>
+                <th>来源网址</th>
+                <th>更新时间</th>
+                <th>备注</th>
+              </tr>
+            </thead>
+            <tbody id="sourceRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="footer">
+        本页面是 DIY 申请管理工具，不替代学校官方 admissions decision。提交前请逐项复核项目页面、语言政策、费用页和申请系统。
+      </div>
+    </main>
+  </div>
+
+  <script>
+    /*
+      data.js 区域
+      维护说明：新增学校时保持 schoolData[].programs[] 字段一致。
+    */
+    const updatedAt = "2026-08-05";
+    const exchangeRates = {
+      HKD: 0.92,
+      SGD: 5.55,
+      AUD: 4.75,
+      GBP: 9.50,
+      MOP: 0.90,
+      EUR: 7.85,
+      CHF: 8.90,
+      SEK: 0.75,
+      DKK: 1.05
+    };
+
+    const goals = {
+      season: "2027 Fall",
+      directions: ["Computer Science", "Artificial Intelligence", "Machine Learning", "Software Engineering", "Data Science", "Cyber Security"],
+      regions: ["欧洲大陆", "香港", "新加坡", "英国", "澳大利亚", "澳门"]
+    };
+
+    const statusOptions = ["未开始", "准备材料", "已提交", "等待结果", "收到Offer", "拒绝"];
+
+    const sourceIndex = [
+      { type: "排名", name: "QS World University Rankings 2027", url: "https://www.topuniversities.com/student-info/choosing-university/worlds-top-100-universities", updated: "2026-07-31", note: "用于 Top100 学校与 QS 2027 综合排名" },
+      { type: "排名", name: "University of Macau QS", url: "https://www.topuniversities.com/universities/university-macau", updated: "2026-07-31", note: "澳门大学 QS 2027 为 #267，不在 Top100，但按用户要求单列" },
+      { type: "官方项目", name: "HKU MSc Computer Science", url: "https://master.cds.hku.hk/msccs/", updated: "2026-07-31", note: "项目、申请费、链接" },
+      { type: "官方项目", name: "HKU MSc Computer Science Application Details", url: "https://master.cds.hku.hk/msccs/admission/application-details/", updated: "2026-07-31", note: "2026/27 学费，2027 需复核" },
+      { type: "官方项目", name: "HKUST MSc Big Data Technology", url: "https://seng.hkust.edu.hk/academics/taught-postgraduate/msc-bdt", updated: "2026-07-31", note: "学费与 rolling admission" },
+      { type: "官方项目", name: "HKUST MSc Information Technology", url: "https://seng.hkust.edu.hk/academics/taught-postgraduate/msc-it", updated: "2026-07-31", note: "学费与 rolling admission" },
+      { type: "官方项目", name: "CUHK MSc Computer Science", url: "https://www.gs.cuhk.edu.hk/programmes/engineering/msc-computer-science", updated: "2026-07-31", note: "学制、学费、背景要求" },
+      { type: "官方项目", name: "CUHK MSc Computer Science Procedure", url: "https://msc.cse.cuhk.edu.hk/?lang=en&page_id=142", updated: "2026-07-31", note: "TOEFL/IELTS/材料" },
+      { type: "官方项目", name: "CityUHK MSc Computer Science", url: "https://www.cityu.edu.hk/pg/programme/program-list/2026/college-of-computing/department-of-computer-science/p53", updated: "2026-07-31", note: "英语要求，2027 需复核" },
+      { type: "官方项目", name: "PolyU MSc Information Technology", url: "https://www.polyu.edu.hk/study/pg/tpg/2026/61030-fit-pit", updated: "2026-07-31", note: "项目结构与早申提示" },
+      { type: "官方项目", name: "PolyU 2027 Taught PG List", url: "https://www.polyu.edu.hk/study/pg/taught-postgraduate", updated: "2026-07-31", note: "2027 entry 开放与早轮时间" },
+      { type: "官方项目", name: "NUS MComp CS", url: "https://www.comp.nus.edu.sg/programmes/pg/mcs/", updated: "2026-07-31", note: "项目介绍" },
+      { type: "官方项目", name: "NUS MComp CS Application", url: "https://www.comp.nus.edu.sg/programmes/pg/mcs/application/", updated: "2026-07-31", note: "申请费、开放与截止日期、英语说明" },
+      { type: "官方费用", name: "NUS MComp Fees", url: "https://www.comp.nus.edu.sg/programmes/pg/mcs/scholarships/", updated: "2026-07-31", note: "AY2026/27 学费" },
+      { type: "官方项目", name: "NTU MSc AI", url: "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-artificial-intelligence", updated: "2026-07-31", note: "材料与英语要求" },
+      { type: "官方项目", name: "NTU CCDS MSc Programmes", url: "https://www.ntu.edu.sg/computing/admissions/graduate-programmes/master-of-science-programmes", updated: "2026-07-31", note: "AI/Cyber/Data Science 费用" },
+      { type: "官方项目", name: "University of Melbourne MIT", url: "https://study.unimelb.edu.au/find/courses/graduate/master-of-information-technology/", updated: "2026-07-31", note: "方向设置与 2027 变化" },
+      { type: "官方项目", name: "UNSW Master of IT", url: "https://www.unsw.edu.au/study/postgraduate/master-of-information-technology", updated: "2026-07-31", note: "项目与费用说明" },
+      { type: "官方项目", name: "University of Sydney Master of Computer Science", url: "https://www.sydney.edu.au/courses/courses/pc/master-of-computer-science.html", updated: "2026-07-31", note: "项目官方页" },
+      { type: "官方项目", name: "ANU Master of Computing", url: "https://programsandcourses.anu.edu.au/program/7706xmcomp", updated: "2026-07-31", note: "国际生年学费" },
+      { type: "官方项目", name: "UQ Master of Computer Science", url: "https://study.uq.edu.au/study-options/programs/master-computer-science-5522", updated: "2026-07-31", note: "2027 学费、学制" },
+      { type: "官方项目", name: "UQ Master of Computer Science Management", url: "https://study.uq.edu.au/study-options/programs/master-computer-science-management-5523", updated: "2026-07-31", note: "英语要求" },
+      { type: "官方项目", name: "Monash Master of AI", url: "https://www.monash.edu/study/courses/find-a-course/artificial-intelligence-c6007", updated: "2026-07-31", note: "AI 项目官方页" },
+      { type: "官方项目", name: "Monash Master of Cybersecurity", url: "https://www.monash.edu/study/courses/find-a-course/cybersecurity-c6002", updated: "2026-07-31", note: "Cyber 项目官方页" },
+      { type: "官方项目", name: "Oxford MSc Advanced Computer Science", url: "https://www.ox.ac.uk/admissions/graduate/courses/msc-advanced-computer-science", updated: "2026-07-31", note: "2026/27 学费与项目信息" },
+      { type: "官方项目", name: "Cambridge MPhil Advanced Computer Science", url: "https://www.postgraduate.study.cam.ac.uk/courses/directory/cscsmpacs", updated: "2026-07-31", note: "项目官方页" },
+      { type: "官方学院", name: "Cambridge ACS Admissions", url: "https://www.cst.cam.ac.uk/admissions/acs", updated: "2026-07-31", note: "申请开放/截止" },
+      { type: "官方项目", name: "Imperial Computing MSc", url: "https://www.imperial.ac.uk/study/courses/postgraduate-taught/2026/computing/", updated: "2026-07-31", note: "2026 entry，2027 需复核" },
+      { type: "官方项目", name: "UCL Computer Science MSc", url: "https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/computer-science-msc", updated: "2026-07-31", note: "2026/27 学费" },
+      { type: "官方项目", name: "Edinburgh Computer Science MSc", url: "https://study.ed.ac.uk/programmes/postgraduate-taught/110-computer-science", updated: "2026-07-31", note: "英语要求与项目" },
+      { type: "官方费用", name: "Edinburgh PGT Fees", url: "https://registryservices.ed.ac.uk/tuition-fees/find/postgraduate-taught/2026-2027/taught-masters", updated: "2026-07-31", note: "2026/27 学费表" },
+      { type: "官方项目", name: "KCL Advanced Computing MSc", url: "https://www.kcl.ac.uk/study/postgraduate-taught/courses/advanced-computing-msc", updated: "2026-07-31", note: "项目页" },
+      { type: "官方费用", name: "KCL Advanced Computing Fees", url: "https://www.kcl.ac.uk/study/postgraduate-taught/courses/advanced-computing-msc/fees", updated: "2026-07-31", note: "2026/27 学费" },
+      { type: "官方项目", name: "Manchester Advanced Computer Science", url: "https://www.manchester.ac.uk/study/masters/courses/list/21573/msc-advanced-computer-science/", updated: "2026-07-31", note: "IELTS 与学费" },
+      { type: "官方项目", name: "Bristol Computer Science Conversion", url: "https://www.bristol.ac.uk/study/postgraduate/taught/msc-computer-science-conversion/", updated: "2026-07-31", note: "学费" },
+      { type: "官方项目", name: "Warwick Computer Science MSc", url: "https://warwick.ac.uk/study/postgraduate/courses/msc-computer-science/", updated: "2026-07-31", note: "IELTS 与项目" },
+      { type: "官方项目", name: "University of Macau Graduate Admissions", url: "https://grs.um.edu.mo/index.php/prospective-students/master-postgraduate-certificate-diploma-programmes/", updated: "2026-07-31", note: "硕士申请基本要求" },
+      { type: "官方指南", name: "University of Macau Admission Guidelines 26/27", url: "https://grs.um.edu.mo/wp-content/uploads/Master-Admission-Guidelines-26_27-English.pdf", updated: "2026-07-31", note: "MSc Computer Science 学制、授课语言、申请费" },
+      { type: "排名", name: "QS World University Rankings 2027", url: "https://www.topuniversities.com/qs-top-uni-wur", updated: "2026-08-05", note: "欧洲院校综合排名口径；英国排除，保留 QS 前150院校" },
+      { type: "官方项目", name: "ETH Zurich MSc Computer Science", url: "https://ethz.ch/en/studies/master/degree-programmes/engineering-sciences/computer-science.html", updated: "2026-08-05", note: "英语授课、120 ECTS、专业方向与先修要求" },
+      { type: "官方招生", name: "ETH Zurich MSc application documents and language", url: "https://ethz.ch/en/studies/master/application/master-informatik.html", updated: "2026-08-05", note: "C1 英语、两封推荐信、动机信" },
+      { type: "官方项目", name: "EPFL MSc Computer Science", url: "https://www.epfl.ch/education/master/programs/computer-science/", updated: "2026-08-05", note: "英语授课、数学/算法/数据库/编程先修课" },
+      { type: "官方项目", name: "TUM MSc Informatics", url: "https://www.cit.tum.de/en/cit/studies/degree-programs/master-informatics/", updated: "2026-08-05", note: "英语授课、四学期、VPD、GRE/APS、分析课程与科学论文" },
+      { type: "官方项目", name: "TU Delft MSc Computer Science", url: "https://ocw.tudelft.nl/programs/master/computer-science/", updated: "2026-08-05", note: "项目方向与培养结构；申请条件按 TU Delft 当年招生页复核" },
+      { type: "官方项目", name: "University of Amsterdam MSc Computer Science", url: "https://www.uva.nl/shared-content/programmas/en/masters/computer-science/computer-science.html", updated: "2026-08-05", note: "UvA/VU joint degree，英语授课，120 ECTS" },
+      { type: "官方项目", name: "KU Leuven Master of Artificial Intelligence", url: "https://www.kuleuven.be/programmes/master-artificial-intelligence/index.html", updated: "2026-08-05", note: "全英授课、方向匹配、GRE 与学位要求" },
+      { type: "官方项目", name: "Institut Polytechnique de Paris DataAI", url: "https://www.ip-paris.fr/index.php/en/education/masters/computer-science-program/major-data-and-artificial-intelligence-dataai", updated: "2026-08-05", note: "英语授课、两年、CS 本科、两封学术推荐信" },
+      { type: "官方项目", name: "Université Paris-Saclay M2 CNS international", url: "https://www.universite-paris-saclay.fr/en/education/masters-degree/computer-science/m2-computer-and-network-systems-cns-voie-internationale", updated: "2026-08-05", note: "英语水平、申请审查与面试；适合已有 CS 强背景" },
+      { type: "官方项目", name: "KTH MSc Computer Science", url: "https://www.kth.se/en/studies/master/computer-science", updated: "2026-08-05", note: "2027 入学时间、英语授课、120 ECTS" },
+      { type: "官方招生", name: "KTH Computer Science entry requirements", url: "https://www.kth.se/studies/master/computer-science/entry-requirements-computer-science-1.419975", updated: "2026-08-05", note: "数学 28.5 ECTS、CS 22.5 ECTS、CV、动机信、两封推荐信" },
+      { type: "官方项目", name: "Uppsala MSc Computer Science", url: "https://www.uu.se/en/study/programme/masters-programme-computer-science", updated: "2026-08-05", note: "90 ECTS CS、30 ECTS 数学、英语、summary sheet" },
+      { type: "官方项目", name: "Politecnico di Milano MSc Computer Science and Engineering", url: "https://dynamicpoli.polimi.it/en/education/laurea-programmes/programme-detail/computer-science-and-engineering", updated: "2026-08-05", note: "学位、最低平均成绩、英语证明、课程补修义务" },
+      { type: "官方项目", name: "University of Copenhagen MSc Computer Science", url: "https://www.ku.dk/studies/masters/computer-science", updated: "2026-08-05", note: "45 ECTS CS、7.5 ECTS 数学、English B、非 EU 1月15日" },
+      { type: "官方项目", name: "RWTH MSc Software Systems Engineering", url: "https://www.fsmpi.rwth-aachen.de/en/studium/studiengaenge/sse/", updated: "2026-08-05", note: "英语授课、CS/CE/Informatics 学位与软件系统课程结构" },
+      { type: "官方项目", name: "KIT MSc Computer Science", url: "https://www.sle.kit.edu/english/vorstudium/master-computer-science.php", updated: "2026-08-05", note: "英语授课、B2、GRE豁免范围、四类学分门槛" },
+      { type: "官方项目", name: "Sapienza MSc Artificial Intelligence and Robotics", url: "https://corsidilaurea.uniroma1.it/en/course/33514/organization", updated: "2026-08-05", note: "英语授课、两年、课程要求与个人准备审核" },
+      { type: "官方项目", name: "Trinity MSc Computer Science FAQ", url: "https://www.tcd.ie/scss/courses/postgraduate/computer-science/faq/", updated: "2026-08-05", note: "2.1、编程能力、英语证明、可能的编程测试" },
+      { type: "官方招生", name: "Aalto Master's admissions", url: "https://www.aalto.fi/en/study-at-aalto/apply-to-masters-programmes", updated: "2026-08-05", note: "2027申请窗口、材料、英语、MLDSAI GRE要求" }
+      ,{ type: "官方费用", name: "ETH Zurich tuition fees", url: "https://ethz.ch/students/en/studies/financial/tuition-fees.html", updated: "2026-08-05", note: "Group 1 CHF730/学期；Group 2 外国学生 CHF2190/学期；另有 semester fees" }
+      ,{ type: "官方费用", name: "EPFL tuition and other fees", url: "https://www.epfl.ch/education/studies/en/rules-and-procedures/study-taxes/tuition-fee-other-fees/", updated: "2026-08-05", note: "标准学期账单 CHF780；部分外国学生自秋季2025为 CHF2240/学期" }
+      ,{ type: "官方费用", name: "TUM tuition fees", url: "https://www.tum.de/en/studies/fees/tuition", updated: "2026-08-05", note: "Informatics 非EU第三国新生 €6000/学期；另加 semester fee" }
+      ,{ type: "官方费用", name: "IP Paris Master's Tuition Fees 2026-2027", url: "https://www.ip-paris.fr/sites/default/files/pages/documents/Masters/master-phd-track-registration-fees-2024-EN-26-27_19-12-2025.pdf", updated: "2026-08-05", note: "DataAI列为International Master；非EU €7148/学年，EU €4859/学年" }
+      ,{ type: "官方费用", name: "TU Delft tuition fee and finances", url: "https://www.tudelft.nl/en/education/practical-matters/tuition-fee-finances", updated: "2026-08-05", note: "官网按项目、国籍和学年计算 institutional/statutory tuition；需使用官方页面的 calculator" }
+      ,{ type: "官方费用", name: "KU Leuven Advanced Master AI tuition", url: "https://wms.cs.kuleuven.be/cs/studeren/master-artificial-intelligence/application", updated: "2026-08-05", note: "2026/27 reduced €5613.12；其他 admitted students €9493.92" }
+      ,{ type: "官方费用", name: "University of Amsterdam tuition fees", url: "https://www.uva.nl/en/education/fees-and-funding/tuition-fees/tuition-fees.html", updated: "2026-08-05", note: "Faculty of Science MSc Computer Science non-EEA €24150/学年" }
+      ,{ type: "官方费用", name: "Trinity College Dublin postgraduate fees", url: "https://www.tcd.ie/courses/postgraduate/fees/", updated: "2026-08-05", note: "2026/27 Masters in Computer Science non-EU €27790；EU €8840" }
+      ,{ type: "官方费用", name: "Université Paris-Saclay tuition fees", url: "https://www.universite-paris-saclay.fr/en/admission/tuition-fees", updated: "2026-08-05", note: "2026/27 national Master fee €255；非EU差异化费用可按学校政策部分豁免" }
+      ,{ type: "官方费用", name: "KTH Computer Science fees", url: "https://www.kth.se/en/studies/master/computer-science/fees-communication-systems-1.909945", updated: "2026-08-05", note: "非EU/EEA/瑞士 Computer Science 全项目 SEK360000；申请费 SEK900" }
+      ,{ type: "官方费用", name: "Uppsala Computer Science tuition", url: "https://www.uu.se/en/study/programme/masters-programme-computer-science", updated: "2026-08-05", note: "非EU/EEA/瑞士总学费 SEK300000；首期 SEK75000" }
+      ,{ type: "官方费用", name: "Politecnico di Milano tuition fees", url: "https://www.polimi.it/en/prospective-students/how-much-does-it-cost/laurea-laurea-magistrale-and-single-cycle-programmes", updated: "2026-08-05", note: "2026/27 reserved non-EU海外本科生通常按最高档；46-74 ECTS full contribution €3726/学年" }
+      ,{ type: "官方费用", name: "University of Copenhagen tuition fees", url: "https://www.ku.dk/studies/masters/application-and-admission/tuition-fees", updated: "2026-08-05", note: "非EU/EEA/非北欧每年按项目60 ECTS动态报价；申请 deposit DKK1120" }
+      ,{ type: "官方费用", name: "RWTH study costs and financing", url: "https://www.rwth-aachen.de/cms/root/studium/Vor-dem-Studium/~cgfzv/Kosten-und-Finanzierung/lidx/1/", updated: "2026-08-05", note: "无学费；Semester Fee每学期变化，在 RWTHonline 查询" }
+      ,{ type: "官方费用", name: "KIT study costs", url: "https://www.studienstart.kit.edu/english/financing-part-time-job.php", updated: "2026-08-05", note: "Baden-Württemberg非EU学生 €1500/学期；另有约€184行政/学生服务费用" }
+      ,{ type: "官方费用", name: "Sapienza standard registration fees", url: "https://www.uniroma1.it/en/content/standard-registration-fee-amounts", updated: "2026-08-05", note: "国际生按来源国 GDP 组别 €300/€700/€1500/年；2026/27 English programmes页面同样列€300-1500/年" }
+      ,{ type: "官方费用", name: "Aalto MLDSAI tuition fees", url: "https://www.aalto.fi/en/study-options/machine-learning-data-science-and-artificial-intelligence-master-of-science-technology", updated: "2026-08-05", note: "Technology field，非EU €17000/学年；两年通常 €34000" }
+    ];
+
+    function makeReq({ background, gpa, courses, ielts, toefl, pte, gre = "通常不要求，竞争型项目可提交", gmat = "不要求", cross = "视项目而定", research = "加分", internship = "加分" }) {
+      return {
+        background,
+        computerMajor: background,
+        relatedMajor: "计算机、工程、数学、统计、信息系统等相关方向优先",
+        minGpa: gpa,
+        tier985211: "无统一硬性要求；名校项目会综合看本科院校、均分、课程匹配和经历质量",
+        non211: "可申请，但建议用高 GPA、强项目/实习/科研和早申请补足竞争力",
+        average: gpa,
+        ranking: "官网通常未给班级排名硬线；前 10%-20% 更有竞争力",
+        courses,
+        math: "线性代数、概率统计、离散数学、微积分",
+        programming: "Python/Java/C/C++，数据结构，算法，数据库，操作系统",
+        ielts,
+        toefl,
+        pte,
+        waiver: "英语授课本科或官方认可英语背景可能豁免，需按学校政策确认",
+        gre,
+        gmat,
+        cross,
+        portfolio: "不要求",
+        research,
+        internship,
+        freshGraduate: "通常接受应届生"
+      };
+    }
+
+    function makeFee(currency, tuitionTotal, livingAnnual, accommodationAnnual, applicationFee, visaFee, insuranceAnnual, durationYears, note, tuitionText = "", tuitionSource = "") {
+      return { currency, tuitionTotal, livingAnnual, accommodationAnnual, applicationFee, visaFee, insuranceAnnual, durationYears, note, tuitionText, tuitionSource };
+    }
+
+    function program({
+      id, nameCn, nameEn, college, link, intro, tracks, curriculum, duration, language = "英语",
+      cross, req, fee, sources, deadline = "2027 intake 需复核", rolling = "视项目而定",
+      advice = "建议尽早准备文书、成绩单、语言成绩和推荐人。"
+    }) {
+      return {
+        id, nameCn, nameEn, college, link, intro, tracks, curriculum, duration, language,
+        crossMajor: cross,
+        gre: req.gre,
+        gmat: req.gmat,
+        portfolio: req.portfolio,
+        research: req.research,
+        internship: req.internship,
+        freshGraduate: req.freshGraduate,
+        requirements: req,
+        fee,
+        materials: ["本科成绩单", "在读证明/毕业证/学位证", "语言成绩", "CV", "Personal Statement", "推荐信", "身份证明/护照", "申请费支付凭证"],
+        sources,
+        deadline,
+        rolling,
+        advice
+      };
+    }
+
+    const commonCsReq = makeReq({
+      background: "计算机科学、计算机工程、软件工程或相关学科；转专业需证明数学、编程与项目能力",
+      gpa: "官网多为认可学士学位；规划建议 85+/100 或 3.4+/4.0",
+      courses: "数据结构、算法、计算机组成、操作系统、数据库、软件工程、线性代数、概率统计",
+      ielts: "通常 6.5+，单项按学校政策",
+      toefl: "通常 79-100+",
+      pte: "多数澳英项目接受；香港/新加坡需按项目页确认",
+      cross: "有限接受，需补足先修课或相关经历"
+    });
+
+    const schoolData = [
+      {
+        id: "hku",
+        nameCn: "香港大学",
+        nameEn: "University of Hong Kong",
+        region: "香港",
+        qsRank: 11,
+        qsYear: 2027,
+        website: "https://www.hku.hk/",
+        facultyWebsite: "https://www.cds.hku.hk/",
+        tierNote: "QS 1-30，港前三强，建议作为冲刺。",
+        programs: [
+          program({
+            id: "hku-msccs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "MSc in Computer Science",
+            college: "School of Computing and Data Science",
+            link: "https://master.cds.hku.hk/msccs/",
+            intro: "覆盖 General、Cyber Security、Financial Computing、Multimedia、AI & Decentralized Technologies 等方向。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Cyber Security", "Financial Computing"],
+            curriculum: "核心与选修结合，覆盖高级计算、网络安全、金融科技、多媒体与 AI 去中心化技术。",
+            duration: "全日制通常 1 年；兼读 2 年",
+            cross: "官网偏好计算机/相关背景；非 CS 需证明强编程与数学基础",
+            req: makeReq({
+              background: "认可学士学位，计算机或相关背景更匹配",
+              gpa: "官网未公布硬性 GPA；规划建议 85+/100",
+              courses: "数据结构、算法、操作系统、数据库、计算机网络、线性代数、概率统计",
+              ielts: "按 HKU 研究生英语要求复核；规划建议 6.5+",
+              toefl: "按 HKU 研究生英语要求复核；规划建议 80+",
+              pte: "需按 HKU 官方语言政策确认",
+              cross: "谨慎接受，强项目/工作/先修课很重要"
+            }),
+            fee: makeFee("HKD", 334800, 120000, 70000, 600, 230, 0, 1, "2026/27 非本地全日制普通方向；AI & Decentralized Technologies 非本地为 HK$375,000"),
+            sources: ["https://master.cds.hku.hk/msccs/", "https://master.cds.hku.hk/msccs/admission/application-details/"],
+            deadline: "2027 intake 需复核；2026/27 官网页供规划",
+            rolling: "以官方申请系统为准"
+          })
+        ]
+      },
+      {
+        id: "nus",
+        nameCn: "新加坡国立大学",
+        nameEn: "National University of Singapore",
+        region: "新加坡",
+        qsRank: 10,
+        qsYear: 2027,
+        website: "https://www.nus.edu.sg/",
+        facultyWebsite: "https://www.comp.nus.edu.sg/",
+        tierNote: "QS 1-30，亚洲顶尖，冲刺档。",
+        programs: [
+          program({
+            id: "nus-mcomp-cs",
+            nameCn: "计算机硕士：计算机科学方向",
+            nameEn: "Master of Computing, Computer Science Specialisation",
+            college: "School of Computing",
+            link: "https://www.comp.nus.edu.sg/programmes/pg/mcs/",
+            intro: "NUS Computing 旗舰授课型项目，强调高级与深入的 IT/CS 知识。",
+            tracks: ["Computer Science", "Software Engineering", "Artificial Intelligence"],
+            curriculum: "研究生高级课程、专题选修、项目/课程型路径，具体课程按 NUS Computing 最新列表。",
+            duration: "全日制通常 1.5-2 年；兼读可更长",
+            cross: "通常要求计算机或相关背景；跨专业需强数学、编程和工作/项目证明",
+            req: makeReq({
+              background: "计算机或相关学士背景，强竞争；英语非授课背景需提交 TOEFL/IELTS",
+              gpa: "官网未公布统一 GPA；规划建议 85+/100 或 3.5+/4.0",
+              courses: "数据结构、算法、操作系统、数据库、计算机网络、离散数学",
+              ielts: "英语非授课背景需 IELTS；具体分数以官方系统为准",
+              toefl: "英语非授课背景需 TOEFL；具体分数以官方系统为准",
+              pte: "需按 NUS 官方政策确认",
+              gre: "申请页列出 GRE 送分代码；是否强制需按当年说明复核",
+              cross: "谨慎接受"
+            }),
+            fee: makeFee("SGD", 67144, 24000, 15000, 109, 90, 800, 1.5, "AY2026/27 MComp with Specialisations 学费，含 GST"),
+            sources: ["https://www.comp.nus.edu.sg/programmes/pg/mcs/", "https://www.comp.nus.edu.sg/programmes/pg/mcs/application/", "https://www.comp.nus.edu.sg/programmes/pg/mcs/scholarships/"],
+            deadline: "参考 2026 intake：10月1日开放，1月31日截止；2027 需复核",
+            rolling: "早申请可能获得 early admission consideration"
+          })
+        ]
+      },
+      {
+        id: "ntu",
+        nameCn: "南洋理工大学",
+        nameEn: "Nanyang Technological University, Singapore",
+        region: "新加坡",
+        qsRank: 12,
+        qsYear: 2027,
+        website: "https://www.ntu.edu.sg/",
+        facultyWebsite: "https://www.ntu.edu.sg/computing",
+        tierNote: "QS 1-30，AI/Data/Cyber 方向强，冲刺档。",
+        programs: [
+          program({
+            id: "ntu-msai",
+            nameCn: "人工智能理学硕士",
+            nameEn: "MSc in Artificial Intelligence",
+            college: "College of Computing and Data Science",
+            link: "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-artificial-intelligence",
+            intro: "面向 AI、机器学习、深度学习与智能系统应用的授课型项目。",
+            tracks: ["Artificial Intelligence", "Machine Learning", "Data Science"],
+            curriculum: "AI、机器学习、数据分析、优化、智能系统相关课程。",
+            duration: "全日制通常 1 年；兼读 2 年",
+            cross: "偏好计算机、工程、数学、统计相关背景",
+            req: makeReq({
+              background: "官方材料要求本科及成绩文件；计算机/工程/数学等背景更匹配",
+              gpa: "官网未公布统一 GPA；规划建议 85+/100",
+              courses: "机器学习、线性代数、概率统计、数据结构、算法、Python",
+              ielts: "IELTS 6.5+ 或 MOI 证明",
+              toefl: "TOEFL iBT 100+ 或 MOI 证明",
+              pte: "需按 NTU 当年政策确认",
+              cross: "相关量化背景可尝试"
+            }),
+            fee: makeFee("SGD", 63220, 24000, 15000, 50, 90, 800, 1, "CCDS MSc AI/Cyber/Data Science AY2025 后统一 S$63,220，含 GST"),
+            sources: ["https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-artificial-intelligence", "https://www.ntu.edu.sg/computing/admissions/graduate-programmes/master-of-science-programmes"],
+            deadline: "2027 intake 需复核",
+            rolling: "以项目页和申请系统为准"
+          }),
+          program({
+            id: "ntu-msds",
+            nameCn: "数据科学理学硕士",
+            nameEn: "MSc in Data Science",
+            college: "College of Computing and Data Science",
+            link: "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-data-science-%28msds%29",
+            intro: "跨学科数据科学项目，训练数据管理、分析、解释与可视化能力。",
+            tracks: ["Data Science", "Machine Learning", "Artificial Intelligence"],
+            curriculum: "统计学习、数据管理、机器学习、可视化、数据科学项目。",
+            duration: "全日制通常 1 年",
+            cross: "量化背景强的非 CS 可尝试",
+            req: makeReq({
+              background: "计算机、数学、统计、工程等量化背景优先",
+              gpa: "官网未公布统一 GPA；规划建议 85+/100",
+              courses: "概率统计、线性代数、编程、数据库、机器学习",
+              ielts: "规划建议 IELTS 6.5+；以官方页为准",
+              toefl: "规划建议 TOEFL 100+；以官方页为准",
+              pte: "需按 NTU 当年政策确认",
+              cross: "接受相关量化背景"
+            }),
+            fee: makeFee("SGD", 63220, 24000, 15000, 50, 90, 800, 1, "CCDS MSc AI/Cyber/Data Science AY2025 后统一 S$63,220，含 GST"),
+            sources: ["https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-data-science-%28msds%29", "https://www.ntu.edu.sg/computing/admissions/graduate-programmes/master-of-science-programmes"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "cuhk",
+        nameCn: "香港中文大学",
+        nameEn: "The Chinese University of Hong Kong",
+        region: "香港",
+        qsRank: 18,
+        qsYear: 2027,
+        website: "https://www.cuhk.edu.hk/",
+        facultyWebsite: "https://www.erg.cuhk.edu.hk/",
+        tierNote: "QS 1-30，港前三强，冲刺档。",
+        programs: [
+          program({
+            id: "cuhk-msccs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "MSc in Computer Science",
+            college: "Faculty of Engineering / Department of Computer Science and Engineering",
+            link: "https://www.gs.cuhk.edu.hk/programmes/engineering/msc-computer-science",
+            intro: "面向计算机科学与相关领域毕业生，提供高级 CS 课程训练。",
+            tracks: ["Computer Science", "Software Engineering", "Artificial Intelligence"],
+            curriculum: "24 units，课程覆盖系统、软件、AI、数据与安全方向选修。",
+            duration: "全日制 1 年；兼读 2 年",
+            cross: "官方要求 CS、CE 或相关领域学士",
+            req: makeReq({
+              background: "计算机科学、计算机工程或相关领域学士",
+              gpa: "官网未公布统一 GPA；规划建议 85+/100",
+              courses: "数据结构、算法、操作系统、数据库、计算机网络、数学基础",
+              ielts: "IELTS Academic overall 6.5",
+              toefl: "TOEFL iBT 79 / PBT 550",
+              pte: "需按 CUHK 官方政策确认",
+              cross: "相关专业可申请；纯跨专业风险高"
+            }),
+            fee: makeFee("HKD", 264000, 120000, 70000, 450, 230, 0, 1, "2026/27 全日制学费 HK$264,000"),
+            sources: ["https://www.gs.cuhk.edu.hk/programmes/engineering/msc-computer-science", "https://msc.cse.cuhk.edu.hk/?lang=en&page_id=142", "https://msc.cse.cuhk.edu.hk/?lang=en&page_id=124"],
+            deadline: "参考 2026 intake：1月31日；2027 需复核"
+          })
+        ]
+      },
+      {
+        id: "unsw",
+        nameCn: "新南威尔士大学",
+        nameEn: "The University of New South Wales",
+        region: "澳大利亚",
+        qsRank: 19,
+        qsYear: 2027,
+        website: "https://www.unsw.edu.au/",
+        facultyWebsite: "https://www.unsw.edu.au/engineering",
+        tierNote: "QS 1-30，澳洲 CS/IT 强校，冲刺档。",
+        programs: [
+          program({
+            id: "unsw-mit",
+            nameCn: "信息技术硕士",
+            nameEn: "Master of Information Technology",
+            college: "Faculty of Engineering",
+            link: "https://www.unsw.edu.au/study/postgraduate/master-of-information-technology",
+            intro: "面向 IT、AI、数据库、网络、软件工程等方向的专业型硕士。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Data Science", "Cyber Security", "Software Engineering"],
+            curriculum: "按 specialization 选择课程，覆盖 AI、数据库、网络、软件与安全。",
+            duration: "通常 2 年，可按背景减免学分",
+            cross: "接受非完全 CS 背景但需满足数学/编程先修或桥梁要求",
+            req: makeReq({
+              background: "计算机、工程、科学等背景；具体入学路径按 UNSW 要求",
+              gpa: "官网按澳洲 WAM/等效学位评估；规划建议 80+/100",
+              courses: "数学、编程、数据结构、数据库、系统基础",
+              ielts: "通常 IELTS 6.5，单项 6.0；以 UNSW 英语要求为准",
+              toefl: "通常 TOEFL iBT 90 左右；以官方要求为准",
+              pte: "通常接受 PTE；以官方要求为准",
+              cross: "相对友好"
+            }),
+            fee: makeFee("AUD", 130500, 29710, 18000, 150, 2000, 900, 2, "官网给 indicative fees 说明；金额需按 2027 offer 复核"),
+            sources: ["https://www.unsw.edu.au/study/postgraduate/master-of-information-technology"],
+            deadline: "澳洲多轮/多学期，按 Term 截止日期复核",
+            rolling: "常见滚动审理，建议早申请"
+          })
+        ]
+      },
+      {
+        id: "melbourne",
+        nameCn: "墨尔本大学",
+        nameEn: "The University of Melbourne",
+        region: "澳大利亚",
+        qsRank: 22,
+        qsYear: 2027,
+        website: "https://www.unimelb.edu.au/",
+        facultyWebsite: "https://eng.unimelb.edu.au/",
+        tierNote: "QS 1-30，澳洲顶尖，冲刺档。",
+        programs: [
+          program({
+            id: "unimelb-mit",
+            nameCn: "信息技术硕士",
+            nameEn: "Master of Information Technology",
+            college: "Faculty of Engineering and Information Technology",
+            link: "https://study.unimelb.edu.au/find/courses/graduate/master-of-information-technology/",
+            intro: "提供 AI、Cybersecurity、Distributed Computing、HCI 等方向；2027 起 Computing specialisation 有调整。",
+            tracks: ["Artificial Intelligence", "Cyber Security", "Computer Science", "Software Engineering"],
+            curriculum: "核心 IT 能力加专业方向课程，2027 起部分 specialisation 调整。",
+            duration: "通常 2 年；相关背景可申请学分减免",
+            cross: "对非 CS 申请者相对友好，但需满足入学与英语要求",
+            req: makeReq({
+              background: "认可本科学位；相关背景可减免学分",
+              gpa: "官网按 WAM/等效成绩评估；规划建议 80+/100",
+              courses: "编程、离散数学、数据结构、数据库、系统基础",
+              ielts: "通常 IELTS 6.5，单项 6.0；以 UniMelb 英语政策为准",
+              toefl: "通常接受 TOEFL；以官方政策为准",
+              pte: "通常接受 PTE；以官方政策为准",
+              cross: "相对友好"
+            }),
+            fee: makeFee("AUD", 125952, 29710, 19000, 0, 2000, 900, 2, "2026 年同类 CS/IT 学费约 A$62,976/年；2027 需复核"),
+            sources: ["https://study.unimelb.edu.au/find/courses/graduate/master-of-information-technology/", "https://study.unimelb.edu.au/how-to-apply/graduate-coursework-study/international-applications/entry-requirements"],
+            deadline: "按 semester intake 复核",
+            rolling: "建议早申请和早办理 CoE"
+          })
+        ]
+      },
+      {
+        id: "sydney",
+        nameCn: "悉尼大学",
+        nameEn: "The University of Sydney",
+        region: "澳大利亚",
+        qsRank: 28,
+        qsYear: 2027,
+        website: "https://www.sydney.edu.au/",
+        facultyWebsite: "https://www.sydney.edu.au/engineering/",
+        tierNote: "QS 1-30，澳洲顶尖，冲刺档。",
+        programs: [
+          program({
+            id: "usyd-mcs",
+            nameCn: "计算机科学硕士",
+            nameEn: "Master of Computer Science",
+            college: "Faculty of Engineering",
+            link: "https://www.sydney.edu.au/courses/courses/pc/master-of-computer-science.html",
+            intro: "面向 CS、软件、数据、网络安全等职业方向的硕士项目。",
+            tracks: ["Computer Science", "Software Engineering", "Cyber Security", "Data Science"],
+            curriculum: "核心计算机课程、专业方向课、项目与选修模块。",
+            duration: "通常 2 年；相关背景可能减免",
+            cross: "以官方 entry requirements 为准，相关背景更稳",
+            req: makeReq({
+              background: "计算机或相关本科学位更匹配",
+              gpa: "官网按等效成绩评估；规划建议 80+/100",
+              courses: "编程、数据结构、算法、数据库、数学基础",
+              ielts: "通常 IELTS 6.5，单项 6.0；以 USYD 英语政策为准",
+              toefl: "通常接受 TOEFL；以官方政策为准",
+              pte: "通常接受 PTE；以官方政策为准",
+              cross: "有限接受"
+            }),
+            fee: makeFee("AUD", 110200, 29710, 19000, 150, 2000, 900, 2, "2026/27 具体学费需以官方 course page fee calculator 复核；规划按 A$55,100/年估算"),
+            sources: ["https://www.sydney.edu.au/courses/courses/pc/master-of-computer-science.html"],
+            deadline: "按 semester intake 复核"
+          })
+        ]
+      },
+      {
+        id: "anu",
+        nameCn: "澳大利亚国立大学",
+        nameEn: "Australian National University",
+        region: "澳大利亚",
+        qsRank: 29,
+        qsYear: 2027,
+        website: "https://www.anu.edu.au/",
+        facultyWebsite: "https://cecc.anu.edu.au/",
+        tierNote: "QS 1-30，研究导向强，冲刺档。",
+        programs: [
+          program({
+            id: "anu-mcomp",
+            nameCn: "计算硕士",
+            nameEn: "Master of Computing",
+            college: "College of Engineering, Computing and Cybernetics",
+            link: "https://programsandcourses.anu.edu.au/program/7706xmcomp",
+            intro: "覆盖高级计算、AI、数据与软件相关训练。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Data Science", "Software Engineering"],
+            curriculum: "高级计算核心、specialisation 课程、项目/研究训练。",
+            duration: "2 年",
+            cross: "按 ANU pathway 与背景评估",
+            req: makeReq({
+              background: "认可本科学位；计算/工程/数学背景更匹配",
+              gpa: "官网按 ANU 等效 GPA 评估；规划建议 80+/100",
+              courses: "编程、数学、数据结构、算法、数据库",
+              ielts: "通常 IELTS 6.5，单项 6.0；以 ANU 英语政策为准",
+              toefl: "通常接受 TOEFL；以官方政策为准",
+              pte: "通常接受 PTE；以官方政策为准",
+              cross: "视背景和 pathway"
+            }),
+            fee: makeFee("AUD", 112240, 29710, 17000, 110, 2000, 900, 2, "官方页面列国际生年学费 A$56,120"),
+            sources: ["https://programsandcourses.anu.edu.au/program/7706xmcomp"],
+            deadline: "按 semester intake 复核"
+          })
+        ]
+      },
+      {
+        id: "monash",
+        nameCn: "蒙纳士大学",
+        nameEn: "Monash University",
+        region: "澳大利亚",
+        qsRank: 31,
+        qsYear: 2027,
+        website: "https://www.monash.edu/",
+        facultyWebsite: "https://www.monash.edu/it",
+        tierNote: "QS 30-70，澳洲强校，主申档。",
+        programs: [
+          program({
+            id: "monash-mai",
+            nameCn: "人工智能硕士",
+            nameEn: "Master of Artificial Intelligence",
+            college: "Faculty of Information Technology",
+            link: "https://www.monash.edu/study/courses/find-a-course/artificial-intelligence-c6007",
+            intro: "ACS 认证项目，覆盖深度学习、AI ethics、知识表示与优化。",
+            tracks: ["Artificial Intelligence", "Machine Learning", "Data Science"],
+            curriculum: "AI lifecycle、ML、统计建模、AI 项目与伦理。",
+            duration: "1.5-2 年，按入学背景确定",
+            cross: "量化/IT 相关背景更匹配",
+            req: makeReq({
+              background: "认可学士学位；IT、计算机、工程、数学相关更匹配",
+              gpa: "规划建议 75-80+/100；以 Monash entry requirements 为准",
+              courses: "Python、统计、线性代数、机器学习、数据结构",
+              ielts: "通常 IELTS 6.5，单项 6.0；以 Monash 英语政策为准",
+              toefl: "通常接受 TOEFL；以官方政策为准",
+              pte: "通常接受 PTE；以官方政策为准",
+              cross: "相对友好"
+            }),
+            fee: makeFee("AUD", 104000, 29710, 17000, 100, 2000, 900, 2, "2027 费用需复核；按 A$52,000/年规划估算"),
+            sources: ["https://www.monash.edu/study/courses/find-a-course/artificial-intelligence-c6007"],
+            deadline: "按 semester intake 复核"
+          }),
+          program({
+            id: "monash-cyber",
+            nameCn: "网络安全硕士",
+            nameEn: "Master of Cybersecurity",
+            college: "Faculty of Information Technology",
+            link: "https://www.monash.edu/study/courses/find-a-course/cybersecurity-c6002",
+            intro: "ACS 认证项目，聚焦安全系统、区块链、网络与信息安全。",
+            tracks: ["Cyber Security", "Software Engineering"],
+            curriculum: "安全架构、网络安全、区块链、安全系统项目。",
+            duration: "1.5-2 年",
+            cross: "IT/工程/数学背景更匹配",
+            req: commonCsReq,
+            fee: makeFee("AUD", 104000, 29710, 17000, 100, 2000, 900, 2, "2027 费用需复核；按 A$52,000/年规划估算"),
+            sources: ["https://www.monash.edu/study/courses/find-a-course/cybersecurity-c6002"],
+            deadline: "按 semester intake 复核"
+          })
+        ]
+      },
+      {
+        id: "hkust",
+        nameCn: "香港科技大学",
+        nameEn: "The Hong Kong University of Science and Technology",
+        region: "香港",
+        qsRank: 33,
+        qsYear: 2027,
+        website: "https://hkust.edu.hk/",
+        facultyWebsite: "https://seng.hkust.edu.hk/",
+        tierNote: "QS 30-70，港校强势理工，主申偏冲刺。",
+        programs: [
+          program({
+            id: "hkust-bdt",
+            nameCn: "大数据科技理学硕士",
+            nameEn: "MSc in Big Data Technology",
+            college: "School of Engineering",
+            link: "https://seng.hkust.edu.hk/academics/taught-postgraduate/msc-bdt",
+            intro: "跨 CSE 与 Math 的大数据技术项目，适合数据工程、AI、数据科学方向。",
+            tracks: ["Data Science", "Artificial Intelligence", "Machine Learning"],
+            curriculum: "大数据计算、数据挖掘、机器学习、数据库、统计与优化。",
+            duration: "全日制通常 1 年；兼读 2 年",
+            cross: "官方接受 CS、工程、数学或相关背景；其他学科需 IT/数学经历",
+            req: makeReq({
+              background: "计算机工程、计算机科学、数学或相关领域；其他背景需 IT 与数学相关经历",
+              gpa: "官网未公布统一 GPA；规划建议 85+/100",
+              courses: "数据结构、算法、数据库、概率统计、线性代数、机器学习",
+              ielts: "IELTS 6.5，单项 5.5；以 HKUST 当年 catalog 为准",
+              toefl: "TOEFL iBT 80；以 HKUST 当年 catalog 为准",
+              pte: "需按 HKUST 政策确认",
+              cross: "有条件接受"
+            }),
+            fee: makeFee("HKD", 330000, 120000, 70000, 450, 230, 0, 1, "Fall 2026/27 全日制 HK$330,000"),
+            sources: ["https://seng.hkust.edu.hk/academics/taught-postgraduate/msc-bdt", "https://prog-crs.hkust.edu.hk/pgprog/2025-26/msc-bdt"],
+            deadline: "2027 intake 需复核",
+            rolling: "官方说明 competitive and rolling，强烈建议早申请"
+          }),
+          program({
+            id: "hkust-it",
+            nameCn: "信息技术理学硕士",
+            nameEn: "MSc in Information Technology",
+            college: "School of Engineering",
+            link: "https://seng.hkust.edu.hk/academics/taught-postgraduate/msc-it",
+            intro: "面向 IT、软件、系统、AI 与网络相关方向。",
+            tracks: ["Computer Science", "Software Engineering", "Artificial Intelligence", "Cyber Security"],
+            curriculum: "IT 核心、高级计算、软件与系统方向选修。",
+            duration: "全日制通常 1 年；兼读 2 年",
+            cross: "相关背景优先",
+            req: commonCsReq,
+            fee: makeFee("HKD", 300000, 120000, 70000, 450, 230, 0, 1, "Fall 2026/27 全日制 HK$300,000"),
+            sources: ["https://seng.hkust.edu.hk/academics/taught-postgraduate/msc-it"],
+            deadline: "2027 intake 需复核",
+            rolling: "官方说明 competitive and rolling，强烈建议早申请"
+          })
+        ]
+      },
+      {
+        id: "edinburgh",
+        nameCn: "爱丁堡大学",
+        nameEn: "The University of Edinburgh",
+        region: "英国",
+        qsRank: 35,
+        qsYear: 2027,
+        website: "https://www.ed.ac.uk/",
+        facultyWebsite: "https://informatics.ed.ac.uk/",
+        tierNote: "QS 30-70，AI/CS 传统强校，主申偏冲刺。",
+        programs: [
+          program({
+            id: "edinburgh-msc-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "MSc Computer Science",
+            college: "School of Informatics",
+            link: "https://study.ed.ac.uk/programmes/postgraduate-taught/110-computer-science",
+            intro: "School of Informatics 授课型项目，适合 CS 和 AI 进阶。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Machine Learning"],
+            curriculum: "高级 CS、软件、系统、AI 与项目课程。",
+            duration: "1 年",
+            cross: "偏好 CS/相关强背景",
+            req: makeReq({
+              background: "计算机科学或相关学科背景更匹配",
+              gpa: "英本 2:1 或等效；中国院校分数以官方名单和 band 复核",
+              courses: "编程、数据结构、算法、数学、系统课程",
+              ielts: "IELTS Academic 7.0，单项 6.5",
+              toefl: "按 Edinburgh 英语政策复核",
+              pte: "按 Edinburgh 英语政策复核",
+              cross: "纯跨专业风险较高"
+            }),
+            fee: makeFee("GBP", 45410, 18000, 10500, 60, 524, 800, 1, "2026/27 国际生费用需以官方 fee table 复核"),
+            sources: ["https://study.ed.ac.uk/programmes/postgraduate-taught/110-computer-science", "https://registryservices.ed.ac.uk/tuition-fees/find/postgraduate-taught/2026-2027/taught-masters"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "kcl",
+        nameCn: "伦敦国王学院",
+        nameEn: "King's College London",
+        region: "英国",
+        qsRank: 37,
+        qsYear: 2027,
+        website: "https://www.kcl.ac.uk/",
+        facultyWebsite: "https://www.kcl.ac.uk/nms",
+        tierNote: "QS 30-70，伦敦区位强，主申档。",
+        programs: [
+          program({
+            id: "kcl-advanced-computing",
+            nameCn: "高级计算理学硕士",
+            nameEn: "Advanced Computing MSc",
+            college: "Faculty of Natural, Mathematical & Engineering Sciences",
+            link: "https://www.kcl.ac.uk/study/postgraduate-taught/courses/advanced-computing-msc",
+            intro: "面向计算/量化背景，可定制方向，适合进阶技术路线。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Software Engineering"],
+            curriculum: "高级计算、AI、软件与专题选修。",
+            duration: "1 年",
+            cross: "计算或量化背景可申请",
+            req: makeReq({
+              background: "计算机或具备量化背景的相关学科",
+              gpa: "英本 2:1 或等效；中国院校要求按 KCL 官方换算",
+              courses: "编程、算法、数学、软件/系统基础",
+              ielts: "规划建议 IELTS 7.0；以 KCL English Band 确认",
+              toefl: "按 KCL 英语政策确认",
+              pte: "按 KCL 英语政策确认",
+              cross: "量化背景可尝试"
+            }),
+            fee: makeFee("GBP", 40450, 19000, 12000, 0, 524, 800, 1, "2026/27 国际生 £40,450"),
+            sources: ["https://www.kcl.ac.uk/study/postgraduate-taught/courses/advanced-computing-msc", "https://www.kcl.ac.uk/study/postgraduate-taught/courses/advanced-computing-msc/fees"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "manchester",
+        nameCn: "曼彻斯特大学",
+        nameEn: "The University of Manchester",
+        region: "英国",
+        qsRank: 40,
+        qsYear: 2027,
+        website: "https://www.manchester.ac.uk/",
+        facultyWebsite: "https://www.cs.manchester.ac.uk/",
+        tierNote: "QS 30-70，英国老牌强校，主申档。",
+        programs: [
+          program({
+            id: "manchester-acs",
+            nameCn: "高级计算机科学理学硕士",
+            nameEn: "MSc Advanced Computer Science",
+            college: "Department of Computer Science",
+            link: "https://www.manchester.ac.uk/study/masters/courses/list/21573/msc-advanced-computer-science/",
+            intro: "Advanced CS 项目，适合 CS 进阶和专业方向深化。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Software Engineering"],
+            curriculum: "高级算法、软件工程、AI、系统、项目。",
+            duration: "1 年",
+            cross: "强相关背景优先",
+            req: makeReq({
+              background: "计算机科学或相关学科，通常要求强 CS 课程基础",
+              gpa: "英本 2:1 或等效；中国院校按清单/均分复核",
+              courses: "编程、算法、数据结构、数学、系统课程",
+              ielts: "IELTS overall 7.0，单项不低于 6.5",
+              toefl: "按 Manchester 英语政策确认",
+              pte: "按 Manchester 英语政策确认",
+              cross: "纯跨专业风险高"
+            }),
+            fee: makeFee("GBP", 39400, 15000, 9000, 60, 524, 800, 1, "2026 entry 国际生 £39,400"),
+            sources: ["https://www.manchester.ac.uk/study/masters/courses/list/21573/msc-advanced-computer-science/"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "uq",
+        nameCn: "昆士兰大学",
+        nameEn: "The University of Queensland",
+        region: "澳大利亚",
+        qsRank: 40,
+        qsYear: 2027,
+        website: "https://www.uq.edu.au/",
+        facultyWebsite: "https://eait.uq.edu.au/",
+        tierNote: "QS 30-70，澳洲主申强校。",
+        programs: [
+          program({
+            id: "uq-mcs",
+            nameCn: "计算机科学硕士",
+            nameEn: "Master of Computer Science",
+            college: "Faculty of Engineering, Architecture and Information Technology",
+            link: "https://study.uq.edu.au/study-options/programs/master-computer-science-5522",
+            intro: "面向已有 CS/IT 或相关背景申请者，可聚焦多个计算机方向。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Data Science", "Cyber Security"],
+            curriculum: "高级 CS 课程、研究项目、专业方向选修。",
+            duration: "1-1.5 年",
+            cross: "设计给 CS/IT 或相关背景申请者",
+            req: makeReq({
+              background: "计算机科学、IT 或相关学士背景",
+              gpa: "按 UQ 等效 GPA 评估；规划建议 75-80+/100",
+              courses: "编程、数据结构、算法、数据库、数学",
+              ielts: "IELTS overall 6.5，单项 6.0",
+              toefl: "TOEFL iBT 87，L/R/S 19，W 21",
+              pte: "PTE 64，单项 60",
+              cross: "有限接受，需相关背景"
+            }),
+            fee: makeFee("AUD", 60952, 29710, 16000, 100, 2000, 900, 1.5, "2027 官方页面显示 A$60,952；按 1 年学费列示"),
+            sources: ["https://study.uq.edu.au/study-options/programs/master-computer-science-5522", "https://study.uq.edu.au/study-options/programs/master-computer-science-management-5523"],
+            deadline: "Semester 1/2 intake；按官方日期复核"
+          })
+        ]
+      },
+      {
+        id: "imperial",
+        nameCn: "帝国理工学院",
+        nameEn: "Imperial College London",
+        region: "英国",
+        qsRank: 2,
+        qsYear: 2027,
+        website: "https://www.imperial.ac.uk/",
+        facultyWebsite: "https://www.imperial.ac.uk/computing/",
+        tierNote: "QS 1-30，全球顶尖，强冲刺。",
+        programs: [
+          program({
+            id: "imperial-computing",
+            nameCn: "计算理学硕士",
+            nameEn: "MSc Computing",
+            college: "Department of Computing",
+            link: "https://www.imperial.ac.uk/study/courses/postgraduate-taught/2026/computing/",
+            intro: "面向非 CS 或相关背景转入计算领域的高强度项目，需复核具体 pathway。",
+            tracks: ["Computer Science", "Software Engineering", "Artificial Intelligence"],
+            curriculum: "计算核心、软件、系统、AI/ML 与项目。",
+            duration: "1 年",
+            cross: "部分 Computing 项目面向转换或不同背景，但录取极其竞争",
+            req: makeReq({
+              background: "强数学/工程/科学/计算背景，具体项目差异大",
+              gpa: "通常需英本一等或强 2:1 等效；中国顶尖院校高均分更稳",
+              courses: "高级数学、编程、算法、系统或相关量化课程",
+              ielts: "按 Imperial English requirement 复核；规划建议 7.0",
+              toefl: "按 Imperial 英语政策确认",
+              pte: "按 Imperial 英语政策确认",
+              cross: "视具体 Computing/Advanced Computing/AI 项目"
+            }),
+            fee: makeFee("GBP", 46000, 22000, 14500, 125, 524, 800, 1, "2027 需复核；按 2026/27 同类计算项目规划估算"),
+            sources: ["https://www.imperial.ac.uk/study/courses/postgraduate-taught/2026/computing/"],
+            deadline: "2027 intake 需复核",
+            advice: "强冲刺；建议准备高质量算法/AI/系统项目、英文文书与推荐信。"
+          })
+        ]
+      },
+      {
+        id: "oxford",
+        nameCn: "牛津大学",
+        nameEn: "University of Oxford",
+        region: "英国",
+        qsRank: 4,
+        qsYear: 2027,
+        website: "https://www.ox.ac.uk/",
+        facultyWebsite: "https://www.cs.ox.ac.uk/",
+        tierNote: "QS 1-30，强研究导向，强冲刺。",
+        programs: [
+          program({
+            id: "oxford-acs",
+            nameCn: "高级计算机科学理学硕士",
+            nameEn: "MSc in Advanced Computer Science",
+            college: "Department of Computer Science",
+            link: "https://www.ox.ac.uk/admissions/graduate/courses/msc-advanced-computer-science",
+            intro: "高级 CS 课程与 dissertation，方向含 AI 或 Foundations of Computer Science。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Machine Learning"],
+            curriculum: "至少六门高级课程、实践模块、dissertation。",
+            duration: "约 12 个月",
+            cross: "要求极强计算机/数学基础",
+            req: makeReq({
+              background: "计算机科学、数学或相关强技术背景",
+              gpa: "一等或强 2:1 等效；中国顶尖院校高均分更稳",
+              courses: "算法、形式化方法、离散数学、编程、系统、AI/ML",
+              ielts: "按 Oxford higher level English 复核；规划建议 IELTS 7.5",
+              toefl: "按 Oxford 官方英语政策确认",
+              pte: "按 Oxford 官方英语政策确认",
+              cross: "不建议纯跨专业"
+            }),
+            fee: makeFee("GBP", 43730, 18000, 10500, 75, 524, 800, 1, "2026/27 overseas annual course fee £43,730"),
+            sources: ["https://www.ox.ac.uk/admissions/graduate/courses/msc-advanced-computer-science"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "cambridge",
+        nameCn: "剑桥大学",
+        nameEn: "University of Cambridge",
+        region: "英国",
+        qsRank: 6,
+        qsYear: 2027,
+        website: "https://www.cam.ac.uk/",
+        facultyWebsite: "https://www.cst.cam.ac.uk/",
+        tierNote: "QS 1-30，强研究导向，强冲刺。",
+        programs: [
+          program({
+            id: "cambridge-mphil-acs",
+            nameCn: "高级计算机科学哲学硕士",
+            nameEn: "MPhil in Advanced Computer Science",
+            college: "Department of Computer Science and Technology",
+            link: "https://www.postgraduate.study.cam.ac.uk/courses/directory/cscsmpacs",
+            intro: "高强度 9-11 个月 MPhil，面向强 CS 背景申请者。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Machine Learning"],
+            curriculum: "高级课程、研究训练和 dissertation。",
+            duration: "9-11 个月",
+            cross: "要求强 CS 背景，不建议纯跨专业",
+            req: makeReq({
+              background: "计算机科学或高度相关强背景",
+              gpa: "一等或强 2:1 等效；中国顶尖院校高均分更稳",
+              courses: "算法、理论、系统、编程、数学、AI/ML",
+              ielts: "按 Cambridge English requirement 复核；规划建议 IELTS 7.0+",
+              toefl: "按 Cambridge 官方英语政策确认",
+              pte: "按 Cambridge 官方英语政策确认",
+              cross: "不建议纯跨专业"
+            }),
+            fee: makeFee("GBP", 48192, 18000, 10500, 50, 524, 800, 1, "官方费用需在申请系统复核；规划按公开 2026 数据估算"),
+            sources: ["https://www.postgraduate.study.cam.ac.uk/courses/directory/cscsmpacs", "https://www.cst.cam.ac.uk/admissions/acs"],
+            deadline: "参考 2026 entry：9月开放，2月下旬截止；2027 需复核"
+          })
+        ]
+      },
+      {
+        id: "ucl",
+        nameCn: "伦敦大学学院",
+        nameEn: "UCL",
+        region: "英国",
+        qsRank: 8,
+        qsYear: 2027,
+        website: "https://www.ucl.ac.uk/",
+        facultyWebsite: "https://www.ucl.ac.uk/computer-science/",
+        tierNote: "QS 1-30，伦敦顶尖，冲刺档。",
+        programs: [
+          program({
+            id: "ucl-msc-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "Computer Science MSc",
+            college: "Department of Computer Science",
+            link: "https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/computer-science-msc",
+            intro: "UCL CS 授课型项目，适合进入软件、数据、AI 或计算职业方向。",
+            tracks: ["Computer Science", "Software Engineering", "Artificial Intelligence"],
+            curriculum: "核心计算课程、选修、项目。",
+            duration: "1 年",
+            cross: "具体背景要求按项目页确认",
+            req: makeReq({
+              background: "计算机或相关背景；部分项目可接受量化背景",
+              gpa: "英本 2:1 或等效；中国院校按 UCL list/band 复核",
+              courses: "编程、算法、数学、软件/系统基础",
+              ielts: "按 UCL English level 复核；规划建议 7.0",
+              toefl: "按 UCL 英语政策确认",
+              pte: "按 UCL 英语政策确认",
+              cross: "视项目具体要求"
+            }),
+            fee: makeFee("GBP", 42700, 22000, 14500, 90, 524, 800, 1, "2026/27 full-time overseas £42,700"),
+            sources: ["https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/computer-science-msc"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "polyu",
+        nameCn: "香港理工大学",
+        nameEn: "The Hong Kong Polytechnic University",
+        region: "香港",
+        qsRank: 50,
+        qsYear: 2027,
+        website: "https://www.polyu.edu.hk/",
+        facultyWebsite: "https://www.polyu.edu.hk/comp/",
+        tierNote: "QS 30-70，港校主申档。",
+        programs: [
+          program({
+            id: "polyu-it",
+            nameCn: "信息技术理学硕士",
+            nameEn: "MSc in Information Technology",
+            college: "Department of Computing",
+            link: "https://www.polyu.edu.hk/study/pg/tpg/2026/61030-fit-pit",
+            intro: "31 credits，IT 与计算方向授课型项目，早申请更优。",
+            tracks: ["Computer Science", "Software Engineering", "Data Science", "Cyber Security"],
+            curriculum: "信息技术核心、项目与选修，课程按当年开课资源决定。",
+            duration: "全日制 1 年；兼读 2.5 年",
+            cross: "相关背景优先",
+            req: makeReq({
+              background: "计算机、信息技术、工程、科学等相关背景优先",
+              gpa: "官网未公布统一 GPA；规划建议 80-85+/100",
+              courses: "编程、数据库、网络、软件工程、数学基础",
+              ielts: "通常 IELTS 6.0+；以 PolyU 当年英语政策为准",
+              toefl: "通常 TOEFL iBT 80+；以官方政策为准",
+              pte: "需按 PolyU 官方政策确认",
+              cross: "有限接受"
+            }),
+            fee: makeFee("HKD", 249100, 120000, 70000, 450, 230, 0, 1, "2027 学费需复核；按 31 credits x HK$8,035 规划估算"),
+            sources: ["https://www.polyu.edu.hk/study/pg/tpg/2026/61030-fit-pit", "https://www.polyu.edu.hk/study/pg/taught-postgraduate"],
+            deadline: "2027 Sept Entry Early Round：官方列表显示 2026-10-20；最终以项目页为准",
+            rolling: "名额有限，官方建议早申请"
+          })
+        ]
+      },
+      {
+        id: "cityu",
+        nameCn: "香港城市大学",
+        nameEn: "City University of Hong Kong",
+        region: "香港",
+        qsRank: 52,
+        qsYear: 2027,
+        website: "https://www.cityu.edu.hk/",
+        facultyWebsite: "https://www.cityu.edu.hk/cc/",
+        tierNote: "QS 30-70，港校主申档。",
+        programs: [
+          program({
+            id: "cityu-msc-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "MSc Computer Science",
+            college: "College of Computing / Department of Computer Science",
+            link: "https://www.cityu.edu.hk/pg/programme/program-list/2026/college-of-computing/department-of-computer-science/p53",
+            intro: "提升软件开发、计算机系统和高级计算能力的授课型项目。",
+            tracks: ["Computer Science", "Software Engineering", "Cyber Security"],
+            curriculum: "软件、系统、网络、安全和高级计算课程。",
+            duration: "通常 1 年",
+            cross: "相关背景优先",
+            req: makeReq({
+              background: "计算机或相关学科背景优先",
+              gpa: "官网未公布统一 GPA；规划建议 80-85+/100",
+              courses: "编程、数据结构、算法、数据库、操作系统",
+              ielts: "IELTS Academic overall 6.5",
+              toefl: "TOEFL 按官方要求；另可能接受 CET-6，需复核",
+              pte: "需按 CityUHK 官方政策确认",
+              cross: "有限接受"
+            }),
+            fee: makeFee("HKD", 222000, 120000, 70000, 500, 230, 0, 1, "2027 学费需复核；按往年/规划估算"),
+            sources: ["https://www.cityu.edu.hk/pg/programme/program-list/2026/college-of-computing/department-of-computer-science/p53"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "bristol",
+        nameCn: "布里斯托大学",
+        nameEn: "University of Bristol",
+        region: "英国",
+        qsRank: 57,
+        qsYear: 2027,
+        website: "https://www.bristol.ac.uk/",
+        facultyWebsite: "https://www.bristol.ac.uk/engineering/",
+        tierNote: "QS 30-70，英国主申档，conversion 对跨专业更友好。",
+        programs: [
+          program({
+            id: "bristol-cs-conversion",
+            nameCn: "计算机科学转换硕士",
+            nameEn: "MSc Computer Science (Conversion)",
+            college: "Faculty of Science and Engineering",
+            link: "https://www.bristol.ac.uk/study/postgraduate/taught/msc-computer-science-conversion/",
+            intro: "面向非 CS 背景转入计算机科学的 conversion 项目。",
+            tracks: ["Computer Science", "Software Engineering"],
+            curriculum: "编程、软件工程、数据库、系统、项目。",
+            duration: "1 年",
+            cross: "接受跨专业，是 UK 转码友好选项",
+            req: makeReq({
+              background: "非 CS 背景可申请；需证明学习能力和量化基础",
+              gpa: "英本 2:1 或等效；中国院校要求按 Bristol 政策复核",
+              courses: "数学/逻辑/编程经历加分，非强制项按项目页确认",
+              ielts: "按 Bristol Profile 复核；规划建议 IELTS 6.5+",
+              toefl: "按 Bristol 英语政策确认",
+              pte: "按 Bristol 英语政策确认",
+              cross: "友好"
+            }),
+            fee: makeFee("GBP", 36600, 14000, 8500, 60, 524, 800, 1, "官方 2026/27 overseas £36,600"),
+            sources: ["https://www.bristol.ac.uk/study/postgraduate/taught/msc-computer-science-conversion/"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "warwick",
+        nameCn: "华威大学",
+        nameEn: "University of Warwick",
+        region: "英国",
+        qsRank: 68,
+        qsYear: 2027,
+        website: "https://warwick.ac.uk/",
+        facultyWebsite: "https://warwick.ac.uk/fac/sci/dcs/",
+        tierNote: "QS 30-70，英国主申档。",
+        programs: [
+          program({
+            id: "warwick-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "Computer Science MSc",
+            college: "Department of Computer Science",
+            link: "https://warwick.ac.uk/study/postgraduate/courses/msc-computer-science/",
+            intro: "面向 CS 或强相关背景申请者，高级 CS 授课型项目。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Software Engineering"],
+            curriculum: "高级 CS、AI、系统、软件、项目。",
+            duration: "1 年",
+            cross: "相关背景优先",
+            req: makeReq({
+              background: "相关学科 2:1 或等效",
+              gpa: "英本 2:1 或等效；中国院校按 Warwick 政策复核",
+              courses: "数据结构、算法、编程、数学、系统基础",
+              ielts: "IELTS overall 6.5，单项 6.0",
+              toefl: "按 Warwick 英语政策确认",
+              pte: "按 Warwick 英语政策确认",
+              cross: "有限接受"
+            }),
+            fee: makeFee("GBP", 37460, 14000, 8500, 75, 524, 800, 1, "2027 需复核；按公开 2026/27 规划估算"),
+            sources: ["https://warwick.ac.uk/study/postgraduate/courses/msc-computer-science/"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "uwa",
+        nameCn: "西澳大学",
+        nameEn: "The University of Western Australia",
+        region: "澳大利亚",
+        qsRank: 77,
+        qsYear: 2027,
+        website: "https://www.uwa.edu.au/",
+        facultyWebsite: "https://www.uwa.edu.au/schools/physics-mathematics-and-computing",
+        tierNote: "QS 70-100，保底/稳妥档，澳洲 Top100 补充。",
+        programs: [
+          program({
+            id: "uwa-it",
+            nameCn: "信息技术硕士",
+            nameEn: "Master of Information Technology",
+            college: "School of Physics, Mathematics and Computing",
+            link: "https://www.uwa.edu.au/study/courses/master-of-information-technology",
+            intro: "官网需复核最新 intake 与费用，作为澳洲 Top100 扩展选项。",
+            tracks: ["Computer Science", "Software Engineering", "Data Science"],
+            curriculum: "IT、软件、数据与项目课程。",
+            duration: "通常 1.5-2 年",
+            cross: "相对友好",
+            req: commonCsReq,
+            fee: makeFee("AUD", 92000, 29710, 16000, 125, 2000, 900, 2, "官网未公布于本次核验摘要，参考往年数据，仅供规划"),
+            sources: ["https://www.uwa.edu.au/study/courses/master-of-information-technology"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "adelaide",
+        nameCn: "阿德莱德大学",
+        nameEn: "Adelaide University",
+        region: "澳大利亚",
+        qsRank: 79,
+        qsYear: 2027,
+        website: "https://www.adelaideuni.edu.au/",
+        facultyWebsite: "https://www.adelaideuni.edu.au/",
+        tierNote: "QS 70-100，保底/稳妥档，澳洲 Top100 补充。",
+        programs: [
+          program({
+            id: "adelaide-cs",
+            nameCn: "计算机科学硕士",
+            nameEn: "Master of Computer Science",
+            college: "Faculty/School to be confirmed",
+            link: "https://www.adelaideuni.edu.au/",
+            intro: "2026-2027 院校合并/项目页需重点复核，先作为候选库占位。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Data Science"],
+            curriculum: "官网未公布，参考往年数据，仅供规划。",
+            duration: "通常 2 年",
+            cross: "需复核",
+            req: commonCsReq,
+            fee: makeFee("AUD", 96000, 29710, 15000, 125, 2000, 900, 2, "官网未公布，参考往年数据，仅供规划"),
+            sources: ["https://www.adelaideuni.edu.au/"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "uts",
+        nameCn: "悉尼科技大学",
+        nameEn: "University of Technology Sydney",
+        region: "澳大利亚",
+        qsRank: 87,
+        qsYear: 2027,
+        website: "https://www.uts.edu.au/",
+        facultyWebsite: "https://www.uts.edu.au/about/faculty-engineering-and-information-technology",
+        tierNote: "QS 70-100，保底/稳妥档，悉尼就业导向。",
+        programs: [
+          program({
+            id: "uts-it",
+            nameCn: "信息技术硕士",
+            nameEn: "Master of Information Technology",
+            college: "Faculty of Engineering and Information Technology",
+            link: "https://www.uts.edu.au/study/find-a-course/master-information-technology",
+            intro: "就业导向 IT 项目，需复核 2027 费用与方向。",
+            tracks: ["Computer Science", "Data Science", "Cyber Security", "Software Engineering"],
+            curriculum: "IT 核心、专业方向、项目。",
+            duration: "通常 2 年",
+            cross: "相对友好",
+            req: commonCsReq,
+            fee: makeFee("AUD", 98000, 29710, 19000, 100, 2000, 900, 2, "官网未公布于本次核验摘要，参考往年数据，仅供规划"),
+            sources: ["https://www.uts.edu.au/study/find-a-course/master-information-technology"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      },
+      {
+        id: "eth-zurich",
+        nameCn: "苏黎世联邦理工学院",
+        nameEn: "ETH Zurich",
+        region: "瑞士",
+        qsRank: 8,
+        qsYear: 2027,
+        website: "https://ethz.ch/",
+        facultyWebsite: "https://inf.ethz.ch/",
+        tierNote: "QS 2027 前10，强冲刺；官网强调优秀成绩、强课程匹配和高选择性。",
+        programs: [
+          program({
+            id: "eth-msc-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "MSc Computer Science",
+            college: "Department of Computer Science",
+            link: "https://ethz.ch/en/studies/master/degree-programmes/engineering-sciences/computer-science.html",
+            intro: "120 ECTS、2 年，方向覆盖 Data Management Systems、Machine Intelligence、Secure and Reliable Systems、Visual and Interactive Computing、Theoretical Computer Science。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Machine Learning", "Cyber Security"],
+            curriculum: "核心计算机科学、专业方向、选修与硕士论文；要求按 ETH Bachelor 等效课程逐项比对。",
+            duration: "2 年 / 120 ECTS",
+            cross: "只建议 CS 或高度相关强技术背景；数学、算法、系统课程不足风险很高",
+            req: makeReq({
+              background: "认可大学学士；Computer Science 或相关领域如 Electrical Engineering、Mathematics、Physics 可按 profile 评估",
+              gpa: "官网未给统一 GPA；明确要求优秀成绩，通常应处于本专业前列",
+              courses: "按 ETH Computer Science requirement profile 对照：算法、数据结构、系统、数据库、理论计算机、数学与编程",
+              ielts: "英语 C1；证书必须在申请截止日前提交，具体认可考试见 ETH Language requirements",
+              toefl: "按 ETH C1 认可证书清单；不可用未被清单认可的证明替代",
+              pte: "按 ETH 认可证书清单确认",
+              gre: "通常不是普遍硬性要求；如申请表/项目要求则按当年说明提交",
+              cross: "高度谨慎，必须用课程与成绩证明等效性"
+            }),
+            fee: makeFee("CHF", 8760, 24000, 14000, null, null, 0, 2, "中国大陆等通常属于 Group 2；学费部分按 CHF2190/学期×4，另加 compulsory semester fees；符合例外身份者按 Group 1 CHF730/学期", "Group 2：CHF 2,190/学期；2年4学期学费部分 CHF 8,760。Group 1：CHF 730/学期；学费部分 CHF 2,920。两者均另加 semester fees。", "https://ethz.ch/students/en/studies/financial/tuition-fees.html"),
+            sources: ["https://ethz.ch/en/studies/master/degree-programmes/engineering-sciences/computer-science.html", "https://ethz.ch/en/studies/master/application/master-informatik.html", "https://ethz.ch/students/en/studies/financial/tuition-fees.html", "https://ethz.ch/content/dam/ethz/main/education/finanzielles/files-en/tuition-fees.pdf"],
+            deadline: "2027 Fall 需按 ETH 当年 application windows 复核",
+            advice: "提前做课程等效矩阵；动机信约一页、两封英文推荐信，研究/算法/系统经历比泛泛实习更重要。"
+          })
+        ]
+      },
+      {
+        id: "epfl",
+        nameCn: "洛桑联邦理工学院",
+        nameEn: "EPFL",
+        region: "瑞士",
+        qsRank: 22,
+        qsYear: 2027,
+        website: "https://www.epfl.ch/",
+        facultyWebsite: "https://www.epfl.ch/schools/ic/",
+        tierNote: "QS 2027 前30，强冲刺；非 EPFL 本科申请按 dossier 评估且强调 excellent academic records。",
+        programs: [
+          program({
+            id: "epfl-msc-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "Master in Computer Science",
+            college: "School of Computer and Communication Sciences",
+            link: "https://www.epfl.ch/education/master/programs/computer-science/",
+            intro: "120 ECTS，英语授课，适合计算机科学、通信系统或相近强技术背景。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Data Science", "Cyber Security"],
+            curriculum: "计算机核心、专业课程、项目与硕士论文；具体 study plan 以官方 regulations 为准。",
+            duration: "2 年 / 120 ECTS",
+            cross: "非 CS 需有很强的等效课程；补修学分可能被要求",
+            req: makeReq({
+              background: "CS 或 Communication Systems 学士最匹配；其他相关科学/工程学位按 dossier 评估",
+              gpa: "官网未给硬性分数；明确建议 excellent academic records、强推荐信和清晰 specialization",
+              courses: "微积分、离散数学、线性代数、概率；算法、数据结构、数据库、编程、操作系统、计算机体系结构、计算理论",
+              ielts: "官网表述为 excellent English language skills；具体证书按 EPFL application 当年规则",
+              toefl: "按 EPFL 认可语言证明确认",
+              pte: "需按 EPFL 当年政策确认",
+              cross: "仅适合课程高度相近的相关专业"
+            }),
+            fee: makeFee("CHF", 8760, 24000, 14000, 150, null, 0, 2, "部分外国学生自秋季2025适用三倍 tuition；标准学期账单 CHF780，三倍组 CHF2240；申请费 foreign certificate CHF150", "标准组：CHF 780/学期账单，2年约 CHF 3,120（其中 tuition CHF730×4）。三倍组：CHF 2,240/学期账单，2年约 CHF 8,960（其中 tuition CHF2190×4）。另有申请费 CHF150。", "https://www.epfl.ch/education/studies/en/rules-and-procedures/study-taxes/tuition-fee-other-fees/"),
+            sources: ["https://www.epfl.ch/education/master/programs/computer-science/", "https://www.epfl.ch/education/admission/admission-2/master-admission-criteria-application/", "https://www.epfl.ch/education/studies/en/rules-and-procedures/study-taxes/tuition-fee-other-fees/"],
+            deadline: "2027 Fall 需复核；国际申请通常需较早准备完整 dossier",
+            advice: "先把本科课程按 EPFL 推荐课程表映射；推荐信和科研潜力是强冲刺项目的重要组成。"
+          })
+        ]
+      },
+      {
+        id: "tum",
+        nameCn: "慕尼黑工业大学",
+        nameEn: "Technical University of Munich (TUM)",
+        region: "德国",
+        qsRank: 25,
+        qsYear: 2027,
+        website: "https://www.tum.de/",
+        facultyWebsite: "https://www.cit.tum.de/en/cit/",
+        tierNote: "QS 2027 前30，强冲刺；项目有 aptitude assessment，国际申请材料较多。",
+        programs: [
+          program({
+            id: "tum-informatics",
+            nameCn: "信息学理学硕士",
+            nameEn: "MSc Informatics",
+            college: "TUM School of Computation, Information and Technology",
+            link: "https://www.cit.tum.de/en/cit/studies/degree-programs/master-informatics/",
+            intro: "英语授课、120 ECTS、四学期；强调计算机科学基础与研究导向个性化方向。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Software Engineering", "Data Science"],
+            curriculum: "核心基础、方向选修、跨学科模块与研究/论文；以 TUM module handbook 为准。",
+            duration: "4 学期 / 120 ECTS",
+            cross: "其他专业通常不符合 Informatics 等效性；需做 Analysis of Curriculum",
+            req: makeReq({
+              background: "完成至少三年、180 ECTS 等效的 Informatics/Computer Science 学士；项目要求与 TUM BSc Informatics 相当",
+              gpa: "官网未公布统一 GPA；aptitude assessment 综合课程、成绩、文书与学术表现",
+              courses: "编程、算法、数据结构、理论计算机、系统、数据库、数学等；必须上传完整课程描述/模块手册",
+              ielts: "需提交 TUM 认可的英语证明；规划建议 IELTS 6.5+，以当年列表为准",
+              toefl: "需提交 TUM 认可的 TOEFL/等效证明；分数按当年语言页复核",
+              pte: "按 TUM 当年认可清单确认",
+              gre: "中国大陆等国本科申请者需 GRE General：Quant 164、Analytical Writing 4.0；TUM 页面列出国家范围",
+              cross: "谨慎；非 Informatics 本科可能不满足项目资格"
+            }),
+            fee: makeFee("EUR", 24000, 15000, 10000, null, null, 0, 2, "TUM Informatics 对非EU第三国新生列 €6000/学期；4学期学费 €24000，另加 semester fee；适用身份以 TUM 审核为准", "非EU/第三国新入学：€6,000/学期；4学期学费合计 €24,000。另加 campus-specific semester fee。", "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc"),
+            sources: ["https://www.cit.tum.de/en/cit/studies/degree-programs/master-informatics/", "https://www.tum.de/en/studies/degree-programs/detail/informatics-master-of-science-msc", "https://www.tum.de/en/studies/fees/tuition"],
+            deadline: "冬季学期强制截止通常 5月31日；需签证者建议更早，2027 以 TUMonline 为准",
+            advice: "提前准备 VPD、APS（适用者）、GRE、课程描述、约1000字科学论文和不超过两页的 statement of reasons。"
+          })
+        ]
+      },
+      {
+        id: "ip-paris",
+        nameCn: "巴黎理工学院",
+        nameEn: "Institut Polytechnique de Paris",
+        region: "法国",
+        qsRank: 43,
+        qsYear: 2027,
+        website: "https://www.ip-paris.fr/",
+        facultyWebsite: "https://www.ip-paris.fr/en/education/masters/computer-science-program",
+        tierNote: "QS 2027 前50，强冲刺；DataAI 明确面向研究/博士路线。",
+        programs: [
+          program({
+            id: "ip-paris-dataai",
+            nameCn: "数据与人工智能方向硕士",
+            nameEn: "Master in Computer Science – Major Data and Artificial Intelligence (DataAI)",
+            college: "Computer Science Program / IP Paris",
+            link: "https://www.ip-paris.fr/index.php/en/education/masters/computer-science-program/major-data-and-artificial-intelligence-dataai",
+            intro: "两年制、全英授课，覆盖机器学习、逻辑、大数据系统、数据库、NLP、视觉计算与机器人，目标偏研究/博士。",
+            tracks: ["Artificial Intelligence", "Machine Learning", "Data Science", "Computer Science"],
+            curriculum: "第一阶段基础与高级 AI/Data 课程，后续进入研究型选修和硕士论文。",
+            duration: "2 年",
+            cross: "学术型 CS 背景最匹配；不建议纯商科/非量化跨专业",
+            req: makeReq({
+              background: "Bachelor of Science in Computer Science",
+              gpa: "官网未公布统一 GPA；按学术成绩、研究兴趣、推荐信和动机综合评估",
+              courses: "机器学习、算法、逻辑、数据库、大数据系统、编程、数学基础",
+              ielts: "项目页面要求 English；非英语母语者应提交学校认可的英语证明，具体分数按当年招生页",
+              toefl: "需按 IP Paris admissions 页面确认",
+              pte: "需按 IP Paris admissions 页面确认",
+              cross: "不建议缺少 CS 本科核心课的申请者"
+            }),
+            fee: makeFee("EUR", 14296, 15000, 10000, null, null, 0, 2, "DataAI 被列为 International Master；2026/27 非EU €7148/学年，2年 €14296；EU/EEA/Swiss €4859/学年；金额按整个 academic year，身份材料核验后确认", "2026/27官方表：International Master 非EU/EEA/Swiss €7,148/学年，2年合计 €14,296；EU/EEA/Swiss €4,859/学年，2年合计 €9,718。", "https://www.ip-paris.fr/sites/default/files/pages/documents/Masters/master-phd-track-registration-fees-2024-EN-26-27_19-12-2025.pdf"),
+            sources: ["https://www.ip-paris.fr/index.php/en/education/masters/computer-science-program/major-data-and-artificial-intelligence-dataai", "https://www.ip-paris.fr/sites/default/files/pages/documents/Masters/master-phd-track-registration-fees-2024-EN-26-27_19-12-2025.pdf"],
+            deadline: "按 IP Paris admissions 页面和 major call 复核",
+            advice: "如果目标是 PhD/研究岗，应突出数学、算法、科研、论文/研究项目与明确的 AI/Data research interest。"
+          })
+        ]
+      },
+      {
+        id: "tu-delft",
+        nameCn: "代尔夫特理工大学",
+        nameEn: "Delft University of Technology (TU Delft)",
+        region: "荷兰",
+        qsRank: 48,
+        qsYear: 2027,
+        website: "https://www.tudelft.nl/en/",
+        facultyWebsite: "https://www.tudelft.nl/en/eemcs",
+        tierNote: "QS 2027 前50，强冲刺；研究型本科和 CS/CSE 课程连续性很重要。",
+        programs: [
+          program({
+            id: "tudelft-msc-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "MSc Computer Science",
+            college: "Faculty of Electrical Engineering, Mathematics and Computer Science",
+            link: "https://ocw.tudelft.nl/programs/master/computer-science/",
+            intro: "两年制英语环境，方向包括 Bioinformatics、Information Architecture、Media & Knowledge Engineering、Software Technology。",
+            tracks: ["Computer Science", "Software Engineering", "Data Science"],
+            curriculum: "第一年理论、作业与实验室；第二年专业化与大段硕士论文/项目。",
+            duration: "2 年 / 120 ECTS",
+            cross: "要求相关研究型本科；跨专业需课程等价性足够，可能需要 bridging/pre-master 评估",
+            req: makeReq({
+              background: "Computer Science and Engineering 或内容高度相近的研究型学士",
+              gpa: "官网未公布统一 GPA；国际申请按学位质量、课程匹配和成绩整体评估",
+              courses: "编程、数据结构、算法、计算理论、系统、软件工程、数学/统计；课程内容需以 official transcript/module descriptions 证明",
+              ielts: "按 TU Delft 研究生英语要求复核；规划建议 IELTS 6.5+",
+              toefl: "按 TU Delft 英语政策复核；不同项目可能有单项要求",
+              pte: "按 TU Delft 当年 English proficiency list 确认",
+              cross: "有条件接受，先修课缺口是主要风险"
+            }),
+            fee: makeFee("EUR", null, 18000, 12000, null, null, 0, 2, "TU Delft官方费用页要求按项目、国籍与学年使用 tuition fee calculator；本次不把历史或第三方金额写成2027确认学费", "官网当前公开为按 programme / nationality / academic year 计算 institutional or statutory tuition；请在官方 Tuition Fee & Finances 页面选择 MSc Computer Science 与 2027/28 学年后确认，当前固定页面未抓到可审计的项目数字。", "https://www.tudelft.nl/en/education/practical-matters/tuition-fee-finances"),
+            sources: ["https://ocw.tudelft.nl/programs/master/computer-science/", "https://www.tudelft.nl/en/education/programmes/masters", "https://www.tudelft.nl/en/education/practical-matters/tuition-fee-finances"],
+            deadline: "非 EU 申请通常需在冬季/春季完成，2027 需以 TU Delft programme page 为准",
+            advice: "用课程描述建立对照表，重点核对 theoretical CS、systems、algorithms 和 software engineering。"
+          })
+        ]
+      },
+      {
+        id: "ku-leuven",
+        nameCn: "鲁汶大学",
+        nameEn: "KU Leuven",
+        region: "比利时",
+        qsRank: 59,
+        qsYear: 2027,
+        website: "https://www.kuleuven.be/english/",
+        facultyWebsite: "https://wms.cs.kuleuven.be/cs/",
+        tierNote: "QS 2027 前60；AI 项目全英授课，兼顾 CS、认知科学与数据方向。",
+        programs: [
+          program({
+            id: "kuleuven-ai",
+            nameCn: "人工智能高级硕士",
+            nameEn: "Advanced Master of Artificial Intelligence",
+            college: "Faculty of Engineering Science / KU Leuven AI",
+            link: "https://www.kuleuven.be/programmes/master-artificial-intelligence/index.html",
+            intro: "一年制、全英授课；可按 ECS、SLT、BDA 等背景选择与计算、语言/认知、商业数据分析相关方向。",
+            tracks: ["Artificial Intelligence", "Machine Learning", "Data Science", "Computer Science"],
+            curriculum: "机器学习、统计、数据挖掘、高级编程、认知科学、NLP、隐私与大数据等。",
+            duration: "1 年",
+            cross: "可接受科学、工程、经济、心理、语言等背景，但不同 option 对编程/数学/CS 背景要求不同",
+            req: makeReq({
+              background: "至少四年大学学位或等效学位，good study results，且有 computing experience；BDA option 仅建议 CS/Informatics 背景",
+              gpa: "官网未公布统一 GPA；good study results，按 Admissions dossier 综合判断",
+              courses: "至少一门编程；ECS 需面向对象编程和数学；BDA 需较完整 CS 背景；具体按 option 对照",
+              ielts: "按 KU Leuven Faculty of Engineering Science formal language requirements；需提交 English proficiency certificate",
+              toefl: "按 KU Leuven minimum scores 页面确认",
+              pte: "按 KU Leuven accepted tests 页面确认",
+              gre: "非 EEA/英国/瑞士学位申请者需要 GRE；KU Leuven institution code 0749",
+              cross: "方向依背景分流，不能把不同 option 的要求混用"
+            }),
+            fee: makeFee("EUR", 9493.92, 15000, 9000, null, null, 0, 1, "KU Leuven AI申请页列 2026/27：满足减免条件者 €5613.12；其他 admitted students €9493.92；非EEA身份和减免条件需按学校确认", "2026/27：一般 admitted students €9,493.92/年；符合“毕业后2年内注册且此前无职业活动”等条件者可申请 reduced tuition €5,613.12/年。", "https://wms.cs.kuleuven.be/cs/studeren/master-artificial-intelligence/application"),
+            sources: ["https://www.kuleuven.be/programmes/master-artificial-intelligence/index.html", "https://wms.cs.kuleuven.be/cs/studeren/master-artificial-intelligence/application", "https://www.kuleuven.be/english/apply/education/student/fees"],
+            deadline: "按 KU Leuven application window tool 复核；无严格 deadline 时也建议尽早",
+            advice: "先确定 ECS/SLT/BDA option，再按 option 准备课程证明；非 EEA 申请人尽早安排 GRE 和可验证的英语成绩。"
+          })
+        ]
+      },
+      {
+        id: "uva",
+        nameCn: "阿姆斯特丹大学",
+        nameEn: "University of Amsterdam (UvA)",
+        region: "荷兰",
+        qsRank: 60,
+        qsYear: 2027,
+        website: "https://www.uva.nl/en",
+        facultyWebsite: "https://www.uva.nl/en/content/programmas/en/masters/computer-science/computer-science.html",
+        tierNote: "QS 2027 前60；UvA/VU 联合计算机硕士，研究和系统方向突出。",
+        programs: [
+          program({
+            id: "uva-msc-cs",
+            nameCn: "计算机科学理学硕士（联合学位）",
+            nameEn: "MSc Computer Science (joint degree UvA/VU)",
+            college: "Faculty of Science / UvA and Vrije Universiteit Amsterdam",
+            link: "https://www.uva.nl/shared-content/programmas/en/masters/computer-science/computer-science.html",
+            intro: "英语授课、120 ECTS、24个月；轨道包括 Big Data Engineering、Foundations of Computing and Concurrency、Computer Systems and Infrastructure、Software Engineering and Green IT。",
+            tracks: ["Computer Science", "Software Engineering", "Data Science"],
+            curriculum: "系统、软件、网络、并发、数据工程与研究项目；课程在 UvA Science Park 和 VU Campus 进行。",
+            duration: "2 年 / 120 ECTS",
+            cross: "相关 CS/AI/CE/数学背景更稳；具体先修课需按 UvA programme-specific entry requirements 评估",
+            req: makeReq({
+              background: "认可学士学位，需有与 CS MSc 相匹配的学术 CS 背景；每个项目有自己的 entry requirements",
+              gpa: "官网未公布统一 GPA；按课程内容、成绩和 programme-specific selection 综合评估",
+              courses: "算法、数据结构、编程、计算机系统、网络/数据库、软件工程、离散数学与概率统计",
+              ielts: "按 UvA general English requirements 及项目页面确认；规划建议 IELTS 6.5-7.0",
+              toefl: "按 UvA 认可的 TOEFL 要求复核",
+              pte: "按 UvA 认可测试清单复核",
+              cross: "无相应 CS 核心课时风险较高"
+            }),
+            fee: makeFee("EUR", 48300, 18000, 12000, null, null, 0, 2, "UvA Faculty of Science 官方 tuition table：MSc Computer Science non-EEA €24150/学年；2年合计 €48300；joint degree与VU执行项目/费用规则复核", "Non-EEA institutional fee：MSc Computer Science €24,150/学年；2年合计 €48,300。EEA/statutory 或其他身份请按 UvA 当年表格核算。", "https://www.uva.nl/en/education/fees-and-funding/tuition-fees/tuition-fees.html"),
+            sources: ["https://www.uva.nl/shared-content/programmas/en/masters/computer-science/computer-science.html", "https://www.uva.nl/en/education/admissions/masters/applying-for-a-degree-programme.html", "https://www.uva.nl/en/education/fees-and-funding/tuition-fees/tuition-fees.html"],
+            deadline: "UvA 以 programme-specific deadline 为准；Studielink 通常是第一步",
+            advice: "先完成 Studielink，再进 UvA/VU 申请系统；不要只上传成绩单，按项目要求准备课程说明和动机材料。"
+          })
+        ]
+      },
+      {
+        id: "trinity",
+        nameCn: "都柏林圣三一大学",
+        nameEn: "Trinity College Dublin",
+        region: "爱尔兰",
+        qsRank: 75,
+        qsYear: 2027,
+        website: "https://www.tcd.ie/",
+        facultyWebsite: "https://www.tcd.ie/scss/",
+        tierNote: "QS 2027 前100；英语国家 CS 项目，编程与项目能力要求直接。",
+        programs: [
+          program({
+            id: "trinity-msc-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "MSc in Computer Science",
+            college: "School of Computer Science and Statistics",
+            link: "https://www.tcd.ie/scss/courses/postgraduate/computer-science/faq/",
+            intro: "全日制一年制、英语授课，实践性强；可能要求通过编程测试。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Software Engineering"],
+            curriculum: "按 strand 进行高级 CS、实验室、团队项目和研究/应用型工作。",
+            duration: "1 年，全日制",
+            cross: "可接受工程、数学、统计、物理等 numerate discipline，但需 substantial programming experience",
+            req: makeReq({
+              background: "通常要求 appropriate degree 的 Upper Second Class Honours（2.1）或更高；CS/IT/工程/数学/统计/物理等相关背景",
+              gpa: "2.1 或更高；国际成绩按学校/国家等效评估",
+              courses: "C/C++/Java 或其他面向对象编程、软件开发、数学；部分 strand 需要图形学/并发等基础",
+              ielts: "所有非英语母语申请者需按 TCD application 页面提交英语证书，即使本科英语授课也不要默认豁免",
+              toefl: "按 Trinity Graduate Admissions English requirements 复核",
+              pte: "按 Trinity Graduate Admissions English requirements 复核",
+              cross: "量化跨专业可尝试，但编程测试可能成为门槛"
+            }),
+            fee: makeFee("EUR", 27790, 18000, 12000, null, null, 0, 1, "Trinity 2026/27 postgraduate fee table：MSc Computer Science full-time 1年；EU €8840，non-EU €27790；中国申请者按 non-EU 规划", "2026/27：Masters in Computer Science，Full-Time 1年；EU fee €8,840，non-EU fee €27,790。", "https://www.tcd.ie/courses/postgraduate/fees/"),
+            sources: ["https://www.tcd.ie/scss/courses/postgraduate/computer-science/faq/", "https://www.tcd.ie/study/international/how-to-apply/requirements/", "https://www.tcd.ie/courses/postgraduate/fees/"],
+            deadline: "通常秋季入学；2027 以 Trinity Postgraduate Admissions 页面为准",
+            advice: "准备可验证的编程作品和工程项目，确保推荐人/成绩单材料完整；纯文书型申请不适合该项目。"
+          })
+        ]
+      },
+      {
+        id: "paris-saclay",
+        nameCn: "巴黎萨克雷大学",
+        nameEn: "Université Paris-Saclay",
+        region: "法国",
+        qsRank: 76,
+        qsYear: 2027,
+        website: "https://www.universite-paris-saclay.fr/en",
+        facultyWebsite: "https://www.universite-paris-saclay.fr/en/education/masters-degree/computer-science",
+        tierNote: "QS 2027 前100；适合已有强 CS 背景、希望申请计算机网络系统国际方向的人。",
+        programs: [
+          program({
+            id: "paris-saclay-m2-cns",
+            nameCn: "计算机与网络系统 M2 国际方向",
+            nameEn: "M2 Computer and Network Systems (CNS) – voie internationale",
+            college: "Master Computer Science / Université Paris-Saclay",
+            link: "https://www.universite-paris-saclay.fr/en/education/masters-degree/computer-science/m2-computer-and-network-systems-cns-voie-internationale",
+            intro: "更像专业化 M2 路线，不是泛化转换项目；官方列出 CS 本科/硕士、工程学位和英语审查。",
+            tracks: ["Computer Science", "Cyber Security", "Software Engineering"],
+            curriculum: "Computer and Network Systems、高级网络/系统课程、项目与国际合作；具体课表随年度更新。",
+            duration: "通常 1 年 M2",
+            cross: "要求强计算机/网络/系统背景，不适合缺少系统课程的纯跨专业申请",
+            req: makeReq({
+              background: "Master 1 CS、四年制 Bachelor、Computer Science Master 2 或含强 CS 成分的工程学位",
+              gpa: "官网未公布统一 GPA；申请由 admission committee 审查，含申请、面试和英语水平",
+              courses: "计算机网络、操作系统、系统软件、编程、算法、数据结构；以目标 M2 要求核对",
+              ielts: "非英语申请者必须提供 English certificate 或 GMAT/GRE 结果，具体分数按当年 call",
+              toefl: "按 Paris-Saclay/国际方向当年英语证明要求",
+              pte: "需按项目当年要求确认",
+              cross: "不建议弱系统背景跨专业"
+            }),
+            fee: makeFee("EUR", 255, 15000, 10000, null, null, 0, 1, "2026/27 Paris-Saclay官网列 national Master fee €255；非EU差异化费用可按学校政策部分豁免，CNS项目页注明金额取决于项目与个人情况，需在注册时确认", "2026/27 national Master registration fee €255；官网同时说明非EU differentiated fees与partial exemption政策，最终按项目和个人情况核算。", "https://www.universite-paris-saclay.fr/en/admission/tuition-fees"),
+            sources: ["https://www.universite-paris-saclay.fr/en/education/masters-degree/computer-science/m2-computer-and-network-systems-cns-voie-internationale", "https://www.universite-paris-saclay.fr/en/admission/tuition-fees"],
+            deadline: "该国际方向页面曾列 2026-05-01至06-15；2027 call 需复核",
+            advice: "确认自己申请的是 M1 还是 M2；如果是 M2，需准备能证明系统/网络方向成熟度的课程、项目或科研材料。"
+          })
+        ]
+      },
+      {
+        id: "kth",
+        nameCn: "皇家理工学院",
+        nameEn: "KTH Royal Institute of Technology",
+        region: "瑞典",
+        qsRank: 82,
+        qsYear: 2027,
+        website: "https://www.kth.se/en",
+        facultyWebsite: "https://www.kth.se/en/eecs",
+        tierNote: "QS 2027 前100；官网公开先修课和选择规则，适合课程匹配度高的 CS 背景。",
+        programs: [
+          program({
+            id: "kth-msc-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "MSc Computer Science",
+            college: "School of Electrical Engineering and Computer Science",
+            link: "https://www.kth.se/en/studies/master/computer-science",
+            intro: "两年制、120 ECTS、全英授课；方向包含高级算法、网络安全、AI、互联网协议、可视化等。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Cyber Security", "Data Science"],
+            curriculum: "高级 CS 核心、约 28 ECTS 选修、专业化和硕士学位项目。",
+            duration: "2 年 / 120 ECTS",
+            cross: "硬先修课明显，不适合缺少算法复杂度/离散数学/系统课程的申请者",
+            req: makeReq({
+              background: "国际认可大学等效 Swedish bachelor's degree",
+              gpa: "无公开统一 GPA；selection 看成绩、背景课程、动机、奖项/论文等，国际院校质量也会进入 merit rating",
+              courses: "数学 28.5 ECTS：单变量微积分、线性代数、概率统计、离散数学；CS 22.5 ECTS：面向对象编程、算法与数据结构、算法复杂性",
+              ielts: "英语等同 Swedish English 6；常见 IELTS overall 6.5",
+              toefl: "常见 TOEFL iBT 90 级别；具体按 University Admissions 认可方式",
+              pte: "PTE Academic 62+（以 University Admissions 当年表格为准）",
+              cross: "先修课不够通常不利；部分 track 还有额外 eligibility"
+            }),
+            fee: makeFee("SEK", 360000, 120000, 70000, 900, null, 0, 2, "KTH Computer Science官方费用页列 non-EU/EEA/Swiss full programme tuition SEK360000；申请费 SEK900；按4学期规划约 SEK90000/学期", "Non-EU/EEA/Swiss：全项目学费 SEK 360,000（2年）；申请费 SEK900；官网说明学费按学期预缴。", "https://www.kth.se/en/studies/master/computer-science/fees-communication-systems-1.909945"),
+            sources: ["https://www.kth.se/en/studies/master/computer-science", "https://www.kth.se/studies/master/computer-science/entry-requirements-computer-science-1.419975", "https://www.kth.se/en/studies/master/computer-science/fees-communication-systems-1.909945"],
+            deadline: "2027 秋季：官方已列 2026-10-16 开放、2027-01-15 截止；材料/缴费 2月1日前",
+            advice: "KTH 申请最多可排四个项目；CS 需提交英文 CV、少于500词动机信、两封推荐信和 programme summary sheet。"
+          })
+        ]
+      },
+      {
+        id: "uppsala",
+        nameCn: "乌普萨拉大学",
+        nameEn: "Uppsala University",
+        region: "瑞典",
+        qsRank: 87,
+        qsYear: 2027,
+        website: "https://www.uu.se/en",
+        facultyWebsite: "https://www.uu.se/en/department/information-technology",
+        tierNote: "QS 2027 前100；CS 项目先修课写得清楚，适合作为北欧主申/匹配。",
+        programs: [
+          program({
+            id: "uppsala-msc-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "Master's Programme in Computer Science",
+            college: "Department of Information Technology",
+            link: "https://www.uu.se/en/study/programme/masters-programme-computer-science",
+            intro: "120 credits、全英授课；可在编程语言、软件工程、并行编程、数据通信、数据库、算法、AI、HCI 等方向组合。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Software Engineering", "Data Science"],
+            curriculum: "自由定制课程、研究/开发项目、第三学期专业化和第四学期学位项目。",
+            duration: "2 年 / 120 credits",
+            cross: "明确要求 90 credits CS + 30 credits 数学，缺口很难靠申请后补齐",
+            req: makeReq({
+              background: "国际认可大学、等效 Swedish bachelor's degree",
+              gpa: "官网未公布 GPA；selection 对 previous studies 和 statement of purpose 整体评估",
+              courses: "至少 90 credits CS，含 programming、algorithms、data structures、computer architecture、operating systems；另 30 credits mathematics",
+              ielts: "English 6：IELTS overall 6.5，单项不低于5.5",
+              toefl: "TOEFL iBT 总分90、写作20级别；按 University Admissions 复核",
+              pte: "按 Uppsala/University Admissions English 6 认可清单",
+              cross: "不建议非 CS 背景，先修课门槛硬"
+            }),
+            fee: makeFee("SEK", 300000, 120000, 70000, null, null, 0, 2, "官方页面列非 EU/EEA/瑞士 total tuition SEK300000，第一期 SEK75000；另有申请费，按 University Admissions 当年规则", "Non-EU/EEA/Swiss：Total tuition SEK 300,000；first tuition fee instalment SEK75,000。", "https://www.uu.se/en/study/programme/masters-programme-computer-science"),
+            sources: ["https://www.uu.se/en/study/programme/masters-programme-computer-science", "https://www.uu.se/en/study/masters-studies/application/entry-requirements.html"],
+            deadline: "通常 1月15日；2027 需以 University Admissions 新一轮为准",
+            advice: "把成绩单课程按 90/30 credits 分类，缺少某一类时不要只用实习项目替代正式学分。"
+          })
+        ]
+      },
+      {
+        id: "polimi",
+        nameCn: "米兰理工大学",
+        nameEn: "Politecnico di Milano",
+        region: "意大利",
+        qsRank: 87,
+        qsYear: 2027,
+        website: "https://www.polimi.it/en",
+        facultyWebsite: "https://www.inginformatica.polimi.it/en/",
+        tierNote: "QS 2027 前100；技术和就业导向强，课程/工程基础不足可能被加修 obligations。",
+        programs: [
+          program({
+            id: "polimi-cse",
+            nameCn: "计算机科学与工程理学硕士",
+            nameEn: "MSc Computer Science and Engineering",
+            college: "School of Industrial and Information Engineering",
+            link: "https://dynamicpoli.polimi.it/en/education/laurea-programmes/programme-detail/computer-science-and-engineering",
+            intro: "英语授课路径，突出软件、系统、AI、数据与工程应用；外校/海外学位会做 curriculum assessment。",
+            tracks: ["Computer Science", "Software Engineering", "Artificial Intelligence", "Data Science"],
+            curriculum: "高级 CS、工程基础、方向选修和 thesis；课程缺口可能转化为 mandatory obligations。",
+            duration: "2 年",
+            cross: "计算机工程/CS 最稳；其他工程、信息科学或海外非工程 CS 可能需补修",
+            req: makeReq({
+              background: "持有学士学位，且学位内容满足 Computer Science and Engineering 的法律/学术要求",
+              gpa: "官网要求 minimum grade average，未在项目摘要固定统一数值；国际申请按 country-specific requirements 评估",
+              courses: "计算机科学、编程、算法、系统、数学和工程基础；不足时可能指定 additional compulsory courses",
+              ielts: "需提供 Polimi 要求的英语证明；具体级别按 Laurea Magistrale English requirements",
+              toefl: "按 Polimi English language requirements 复核",
+              pte: "需按 Polimi 当年认可清单确认",
+              cross: "相关工程可申请但补修风险较高"
+            }),
+            fee: makeFee("EUR", 7452, 15000, 10000, null, null, 0, 2, "Polimi 2026/27官网：海外本科、reserved non-EU且无奖学金者通常按最高档；46-74 ECTS full contribution €3726/学年，2年学费贡献约 €7452；另有税费/保险/地区费等", "2026/27 full contribution：46-74 ECTS 为 €3,726/学年；reserved non-EU海外本科生通常按最高档，2年 tuition contribution 约 €7,452。官网另列 stamp duty、regional tax、保险等非 tuition 项。", "https://www.polimi.it/en/students/tuition-fees-scholarships-and-financial-aid/tuition-fees/proportional-payment-of-the-all-inclusive-amount-on-the-basis-of-educational-credits-ects"),
+            sources: ["https://dynamicpoli.polimi.it/en/education/laurea-programmes/programme-detail/computer-science-and-engineering", "https://www.inginformatica.polimi.it/en/what-requirements-do-i-need-master/", "https://dynamicpoli.polimi.it/en/prospective-students/how-to-apply/admission-to-laurea-magistrale/italian-qualification/requirements-for-admission", "https://www.polimi.it/en/prospective-students/how-much-does-it-cost/laurea-laurea-magistrale-and-single-cycle-programmes", "https://www.polimi.it/en/students/tuition-fees-scholarships-and-financial-aid/tuition-fees/proportional-payment-of-the-all-inclusive-amount-on-the-basis-of-educational-credits-ects"],
+            deadline: "按 Polimi international admissions rounds 复核；非 EU 签证申请应提前",
+            advice: "重点准备完整 syllabus 和学分表；不要只看专业名称，Polimi 会判断工程/数学/计算机基础缺口。"
+          })
+        ]
+      },
+      {
+        id: "copenhagen",
+        nameCn: "哥本哈根大学",
+        nameEn: "University of Copenhagen",
+        region: "丹麦",
+        qsRank: 90,
+        qsYear: 2027,
+        website: "https://www.ku.dk/english/",
+        facultyWebsite: "https://di.ku.dk/english/",
+        tierNote: "QS 2027 前100；非 EU 申请 deadline 早且课程 ECTS 硬筛，需尽早做学分映射。",
+        programs: [
+          program({
+            id: "ku-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "MSc in Computer Science",
+            college: "Department of Computer Science",
+            link: "https://www.ku.dk/studies/masters/computer-science",
+            intro: "2 年英语授课；可在算法与数据结构、编程语言、图像分析、数据科学、HCI、软件工程等方向选课。",
+            tracks: ["Computer Science", "Data Science", "Software Engineering", "Artificial Intelligence"],
+            curriculum: "理论和实践结合，包含专业课程、选修/方向和硕士论文。",
+            duration: "2 年",
+            cross: "国际本科需满足严格 ECTS 分布，申请后不能用 supplementary courses 补齐",
+            req: makeReq({
+              background: "相关 Danish/foreign bachelor's degree；其他国际学位由学校按课程评估",
+              gpa: "无统一 GPA；名额有限时按 CS 学分数量和 CS 课程成绩排序",
+              courses: "至少 45 ECTS CS：编程 7.5（含两种范式）、系统/架构 10、理论 CS 10；另数学 7.5（离散数学、线代、建模）",
+              ielts: "英语 B；按 UCPH English B accepted documentation，必须在 deadline 前到位",
+              toefl: "按 UCPH English B 当年最低分和单项要求复核",
+              pte: "按 UCPH accepted English documentation 复核",
+              cross: "仅有少量 CS 课的跨专业通常不满足 ECTS 门槛"
+            }),
+            fee: makeFee("DKK", null, 120000, 80000, 1120, null, 0, 2, "UCPH官网规定非EU/EEA/非北欧申请者按项目60 ECTS动态收 tuition，2年支付120 ECTS；申请 deposit DKK1120可抵第一笔 tuition；固定页面未显示 Computer Science 的动态选项金额", "非EU/EEA/非北欧：官网按项目、每60 ECTS给出动态 tuition；2年项目按120 ECTS/4学期支付。申请 deposit DKK1,120（成功入学后抵第一笔 tuition）。请在官方页面选择 Computer Science 获取具体金额。", "https://www.ku.dk/studies/masters/application-and-admission/tuition-fees"),
+            sources: ["https://www.ku.dk/studies/masters/computer-science", "https://www.ku.dk/studies/masters/science-language-requirements", "https://www.ku.dk/studies/masters/application-and-admission/tuition-fees"],
+            deadline: "非 EU/EEA/瑞士通常 1月15日 23:59；2027 需复核",
+            advice: "严格按 45 ECTS 和 7.5 ECTS 数学拆分课程；无法补修时不要把软硬件实习当成学分替代。"
+          })
+        ]
+      },
+      {
+        id: "rwth",
+        nameCn: "亚琛工业大学",
+        nameEn: "RWTH Aachen University",
+        region: "德国",
+        qsRank: 104,
+        qsYear: 2027,
+        website: "https://www.rwth-aachen.de/go/id/a/?lidx=1",
+        facultyWebsite: "https://www.informatik.rwth-aachen.de/cms/informatik/studium/Vor-dem-Studium/~nhhb/Masterstudiengaenge/?lidx=1",
+        tierNote: "QS 2027 前150；Software Systems Engineering 是全英计算机相关路线，适合系统/软件工程背景。",
+        programs: [
+          program({
+            id: "rwth-sse",
+            nameCn: "软件系统工程理学硕士",
+            nameEn: "MSc Software Systems Engineering",
+            college: "Faculty of Computer Science",
+            link: "https://www.fsmpi.rwth-aachen.de/en/studium/studiengaenge/sse/",
+            intro: "两年制英语授课计算机硕士，覆盖 theoretical foundations、data/information management、applied CS 和 software engineering。",
+            tracks: ["Software Engineering", "Computer Science", "Data Science"],
+            curriculum: "理论基础、通信、数据与信息管理、应用计算机科学、软件工程和 thesis。",
+            duration: "2 年 / 4 学期",
+            cross: "CS、Computer Engineering、Informatics 或 closely related discipline；非相关背景风险高",
+            req: makeReq({
+              background: "国际认可大学 CS、Computer Engineering、Informatics 或其他 closely related bachelor",
+              gpa: "官网未公布统一 GPA；需满足课程/语言/学位要求，容量和 selection 另按当年规则",
+              courses: "编程、数据结构与算法、数据库/信息系统、软件工程、计算机系统、网络、安全、理论基础和数学",
+              ielts: "按 RWTH general examination regulations 的英语/德语证明要求复核；项目以英语为主",
+              toefl: "按 RWTH accepted English evidence 复核",
+              pte: "需按 RWTH 当年语言规定确认",
+              cross: "相近计算机/工程背景可尝试，非技术背景不建议"
+            }),
+            fee: makeFee("EUR", 0, 14000, 9000, null, null, 0, 2, "RWTH官网说明普通项目无 tuition fee；每学期必须支付 Semester Fee，金额随学期变化并在 RWTHonline 显示，不能把历史金额当作2027确认值", "普通RWTH项目 tuition fee：€0；Semester Fee 每学期另付，官网说明金额随学期变化，在 RWTHonline 入学/注册时确认。", "https://www.rwth-aachen.de/cms/root/studium/Vor-dem-Studium/~cgfzv/Kosten-und-Finanzierung/lidx/1/"),
+            sources: ["https://www.fsmpi.rwth-aachen.de/en/studium/studiengaenge/sse/", "https://www.informatik.rwth-aachen.de/cms/informatik/studium/vor-dem-studium/bewerbungsinfos/~npqg/master-informatik/?lidx=1", "https://www.rwth-aachen.de/cms/root/studium/Vor-dem-Studium/~cgfzv/Kosten-und-Finanzierung/lidx/1/"],
+            deadline: "RWTH 申请日期按国籍/学期不同；2027 需进入 RWTH Online Application 复核",
+            advice: "如果申请 Computer Science 而非 SSE，务必另查其语言与课程规定；这里选 SSE 是因为项目官方明确为英语授课。"
+          })
+        ]
+      },
+      {
+        id: "kit",
+        nameCn: "卡尔斯鲁厄理工学院",
+        nameEn: "Karlsruhe Institute of Technology (KIT)",
+        region: "德国",
+        qsRank: 110,
+        qsYear: 2027,
+        website: "https://www.kit.edu/",
+        facultyWebsite: "https://www.informatik.kit.edu/english/",
+        tierNote: "QS 2027 前150；全英 CS 项目有清晰的四类学分门槛和英语 B2 证明。",
+        programs: [
+          program({
+            id: "kit-msc-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "MSc Computer Science",
+            college: "Department of Informatics",
+            link: "https://www.sle.kit.edu/english/vorstudium/master-computer-science.php",
+            intro: "英语授课、120 ECTS、四学期；课程自由度高，但入学学分和容量限制明确。",
+            tracks: ["Computer Science", "Artificial Intelligence", "Software Engineering", "Cyber Security"],
+            curriculum: "core、in-depth、minor/interdisciplinary modules 与硕士论文，几乎无固定 compulsory courses。",
+            duration: "4 学期 / 120 ECTS",
+            cross: "可由相关专业申请，但学分不足时需满足 interview pathway 或不具备资格",
+            req: makeReq({
+              background: "至少三年、180 ECTS 的 CS 或内容基本相同的学士学位",
+              gpa: "按 selection ranking：最终成绩最高70分，理论 CS最高20、实践 CS最高50、计算机工程最高10、数学最高40",
+              courses: "直接路径：数学25 ECTS、理论 CS15、实践 CS30、计算机工程8；较低门槛时至少三类满足 15/20/6 等要求并参加 aptitude interview",
+              ielts: "CEFR B2；常见 IELTS 6.5 且单项不低于5.5",
+              toefl: "TOEFL iBT 至少90；以 KIT current regulations 为准",
+              pte: "PTE overall 58.5，分项按 KIT 页面列出的最低值；以当年规则复核",
+              gre: "EHEA 或 Lisbon Convention 适用者通常免 GRE；其余按 KIT 申请规定确认",
+              cross: "相关 CS/工程可评估；没有足够四类学分需走面试路径"
+            }),
+            fee: makeFee("EUR", 6000, 14000, 9000, null, null, 0, 2, "KIT 位于 Baden-Württemberg；非EU第三国学生 €1500/学期，4学期学费 €6000；另有行政/学生服务/学生会费用，具体随学期变化", "非EU第三国：€1,500/学期 × 4 = €6,000 tuition；KIT另列约€92 Studierendenwerk + €80 administration + €12 student union per semester，合计约€184/学期，最终以当学期账单为准。", "https://www.studienstart.kit.edu/english/financing-part-time-job.php"),
+            sources: ["https://www.sle.kit.edu/english/vorstudium/master-computer-science.php", "https://www.intl.kit.edu/istudies/9074.php", "https://www.studienstart.kit.edu/english/financing-part-time-job.php"],
+            deadline: "非 EU/欧盟申请者通常冬季 6月15日、夏季 1月15日；2027 需复核",
+            advice: "先把本科课程按 Mathematics / Theoretical CS / Practical CS / Computer Engineering 四类统计 ECTS，避免只用专业名称判断。"
+          })
+        ]
+      },
+      {
+        id: "sapienza",
+        nameCn: "罗马第一大学",
+        nameEn: "Sapienza University of Rome",
+        region: "意大利",
+        qsRank: 111,
+        qsYear: 2027,
+        website: "https://www.uniroma1.it/en",
+        facultyWebsite: "https://i3s.uniroma1.it/en",
+        tierNote: "QS 2027 前150；AI & Robotics 全英授课，需做课程/学分和个人准备审核。",
+        programs: [
+          program({
+            id: "sapienza-air",
+            nameCn: "人工智能与机器人理学硕士",
+            nameEn: "MSc in Artificial Intelligence and Robotics",
+            college: "Faculty of Information Engineering, Computer Science and Statistics",
+            link: "https://corsidilaurea.uniroma1.it/en/course/33514/organization",
+            intro: "两年制、英语授课；面向 AI、机器人、计算机视觉、规划、自动化和人机交互。",
+            tracks: ["Artificial Intelligence", "Machine Learning", "Computer Science", "Robotics"],
+            curriculum: "AI、机器人、视觉、自动化、规划与项目；不同本科背景可能被安排不同 learning path。",
+            duration: "2 年",
+            cross: "需要科学、工程、计算机/信息工程和数学基础；非技术背景不匹配",
+            req: makeReq({
+              background: "认可的学士或等效海外学位；需有科学、工程、计算机/信息工程基础",
+              gpa: "官网未公布统一 GPA；先做 curriculum requirements assessment，再做 personal preparation assessment",
+              courses: "当前课程规定列出数学/统计、信息处理系统/计算机、自动化/电子/工程等可认定学分；具体学分表按 2026/27 regulation",
+              ielts: "英语至少 CEFR B2；项目为 English",
+              toefl: "按 Sapienza international admissions English proof 复核",
+              pte: "按 Sapienza 当年认可测试确认",
+              cross: "只适合有足够 STEM/CS 学分的跨专业申请者"
+            }),
+            fee: makeFee("EUR", 3000, 14000, 8500, 10, null, 0, 2, "Sapienza官方 English programmes 页面列学士/硕士 full tuition €300-1500/年；中国按来源国组别需以 fee table/2027规则确认；2年规划区间 €600-3000，另有€10 pre-selection fee", "国际生按来源国 GDP 组别：€300 / €700 / €1,500 每年；中国归组与2027具体规则需在官方表更新后确认。按最高档2年 tuition €3,000；English programme pre-selection fee €10另计。", "https://www.uniroma1.it/en/content/standard-registration-fee-amounts"),
+            sources: ["https://corsidilaurea.uniroma1.it/en/course/33514/organization", "https://www.uniroma1.it/sites/default/files/documenti_ufficiali/2024/169/30431_en.pdf", "https://www.uniroma1.it/en/content/standard-registration-fee-amounts", "https://www.uniroma1.it/en/node/256794"],
+            deadline: "非 EU 海外申请需按 Sapienza pre-selection/visa call 复核；2027 日期待公布",
+            advice: "准备 syllabus、课程学分和英语证明；如果课程不足，官网会在入学审核中识别缺口，不能只靠实习替代。"
+          })
+        ]
+      },
+      {
+        id: "aalto",
+        nameCn: "阿尔托大学",
+        nameEn: "Aalto University",
+        region: "芬兰",
+        qsRank: 126,
+        qsYear: 2027,
+        website: "https://www.aalto.fi/en",
+        facultyWebsite: "https://www.aalto.fi/en/department-of-computer-science",
+        tierNote: "QS 2027 前150；Machine Learning/Data Science/AI 方向国际化，申请窗口和 GRE 规则清晰。",
+        programs: [
+          program({
+            id: "aalto-macadamia",
+            nameCn: "机器学习、数据科学与人工智能理学硕士",
+            nameEn: "MSc Machine Learning, Data Science and Artificial Intelligence (Macadamia)",
+            college: "School of Science / Aalto University",
+            link: "https://www.aalto.fi/en/study-at-aalto/apply-to-masters-programmes",
+            intro: "两年制英文硕士方向；结合机器学习、数据科学、AI 与研究/产业应用。",
+            tracks: ["Machine Learning", "Data Science", "Artificial Intelligence"],
+            curriculum: "数学、统计、机器学习、数据工程、AI 专题与硕士 thesis；具体 study option 页面为准。",
+            duration: "2 年",
+            cross: "适合 CS、数学、统计、工程等量化背景；课程与 GRE/材料要求按 study option 判断",
+            req: makeReq({
+              background: "适用于技术与工程领域的认可学士学位，需有与 study option 相匹配的 quantitative/CS studies",
+              gpa: "官网未公布统一 GPA；按 programme evaluation criteria 竞争性评估",
+              courses: "编程、线性代数、概率统计、微积分、算法、机器学习/数据科学等；按 Studyinfo 和 Macadamia criteria 核对",
+              ielts: "需要 academic English proof；英语授课学位在部分情形可证明豁免，必须按 Aalto language requirements",
+              toefl: "按 Aalto accepted English tests and minimum scores",
+              pte: "按 Aalto accepted tests 复核",
+              gre: "Macadamia 在 admission group 2 要求 GRE，官方明确建议提前送分；GRE code 7364",
+              cross: "量化背景可尝试，纯非 STEM 风险高"
+            }),
+            fee: makeFee("EUR", 34000, 12000, 7000, null, null, 0, 2, "Aalto官方项目页：MLDSAI 属 Technology and Engineering，非EU/EEA €17000/学年；2年 tuition €34000；可申请 tuition waiver scholarship", "Non-EU/EEA/Swiss：€17,000/academic year；两年标准 tuition 合计 €34,000。EU/EEA/Swiss及符合居留例外者免 tuition；奖学金可能全额减免。", "https://www.aalto.fi/en/study-options/machine-learning-data-science-and-artificial-intelligence-master-of-science-technology"),
+            sources: ["https://www.aalto.fi/en/study-at-aalto/apply-to-masters-programmes", "https://www.aalto.fi/en/study-options/machine-learning-data-science-and-artificial-intelligence-master-of-science-technology", "https://www.aalto.fi/en/admission-services/scholarships-and-tuition-fees"],
+            deadline: "2027 Fall 官方已列 2026-12-07至2027-01-05；2027 instructions 秋季更新后复核",
+            advice: "Aalto 最多申请两个 study options；先准备英语和 GRE，再按每个 option 的 evaluation criteria 定制材料。"
+          })
+        ]
+      },
+      {
+        id: "umac",
+        nameCn: "澳门大学",
+        nameEn: "University of Macau",
+        region: "澳门",
+        qsRank: 267,
+        qsYear: 2027,
+        website: "https://www.um.edu.mo/",
+        facultyWebsite: "https://fst.um.edu.mo/",
+        tierNote: "非 QS Top100，但按用户要求纳入澳门目标；可作稳妥/区域特色选项。",
+        programs: [
+          program({
+            id: "umac-msc-cs",
+            nameCn: "计算机科学理学硕士",
+            nameEn: "Master of Science in Computer Science",
+            college: "Faculty of Science and Technology",
+            link: "https://grs.um.edu.mo/index.php/prospective-students/master-postgraduate-certificate-diploma-programmes/",
+            intro: "面向计算机软件工程师与系统工程师培养，官方指南显示英语授课、2-3 学年。",
+            tracks: ["Computer Science", "Software Engineering", "Artificial Intelligence"],
+            curriculum: "计算机系统、软件工程、AI/数据方向课程，具体以 FST handbook 为准。",
+            duration: "2-3 学年",
+            cross: "相关背景优先",
+            req: makeReq({
+              background: "认可学士学位或等效背景；计算机/工程相关更匹配",
+              gpa: "官网未公布统一 GPA；规划建议 75-80+/100",
+              courses: "编程、数据结构、算法、数据库、数学基础",
+              ielts: "英语授课项目需按 UM 英语要求复核；规划建议 IELTS 6.0-6.5",
+              toefl: "按 UM 官方政策确认",
+              pte: "按 UM 官方政策确认",
+              cross: "有限接受"
+            }),
+            fee: makeFee("MOP", 174000, 80000, 40000, 200, 0, 0, 2, "26/27 指南列申请费 MOP200；学费按规划估算，需复核 fee schedule"),
+            sources: ["https://grs.um.edu.mo/index.php/prospective-students/master-postgraduate-certificate-diploma-programmes/", "https://grs.um.edu.mo/wp-content/uploads/Master-Admission-Guidelines-26_27-English.pdf", "https://www.topuniversities.com/universities/university-macau"],
+            deadline: "2027 intake 需复核"
+          })
+        ]
+      }
+    ];
+
+    const materialItems = [
+      { id: "transcript", name: "本科成绩单", time: "1-2 周", note: "中英文版本、教务章、扫描清晰；英澳常需 grading scale。", template: "按学校要求合并 PDF，文件名含姓名和材料类型。" },
+      { id: "enrolment", name: "在读证明", time: "3-7 天", note: "应届生必须；毕业后改为毕业证和学位证。", template: "中英文盖章版本。" },
+      { id: "degree", name: "毕业证 / 学位证", time: "毕业后办理", note: "应届申请阶段可先不提交，offer 后补交。", template: "中英文认证件。" },
+      { id: "language", name: "语言成绩", time: "1-3 个月", note: "注意有效期、送分代码、是否接受 online/home edition。", template: "保留 PDF report 和送分记录。" },
+      { id: "cv", name: "CV", time: "1-2 周", note: "控制 1-2 页，项目经历写技术栈、任务、结果。", template: "Education / Research / Project / Internship / Skills。" },
+      { id: "ps", name: "Personal Statement", time: "2-4 周", note: "不同学校必须定制 why school / why programme。", template: "背景、动机、课程基础、项目科研、目标、学校匹配。" },
+      { id: "rl", name: "推荐信", time: "3-6 周", note: "提前联系推荐人，准备推荐信素材包。", template: "课程表现、科研/项目贡献、技术能力、潜力。" },
+      { id: "rp", name: "Research Proposal", time: "2-3 周", note: "授课型通常不要求；研究型或特定项目才需要。", template: "问题、文献、方法、数据、预期贡献。" },
+      { id: "portfolio", name: "作品集", time: "2-4 周", note: "CS 通常不要求；HCI/交互/设计相关可能加分。", template: "GitHub、Demo、技术文档、截图和贡献说明。" },
+      { id: "passport", name: "护照/身份证明", time: "1-3 周", note: "护照有效期覆盖入学和签证周期。", template: "彩色扫描 PDF。" }
+    ];
+
+    const writingTemplates = [
+      {
+        title: "Personal Statement",
+        points: [
+          "第一段：个人背景与申请目标，直接说明 CS/AI/DS/Cyber 方向。",
+          "第二段：计算机兴趣来源，用具体课程、问题或项目触发点支撑。",
+          "第三段：本科课程基础，强调数据结构、算法、系统、数学、统计。",
+          "第四段：科研/项目经历，写问题、方法、技术栈、贡献和结果。",
+          "第五段：未来研究或职业方向，落到可执行主题。",
+          "第六段：为什么选择该学校，绑定课程、实验室、学院资源和职业生态。"
+        ]
+      },
+      {
+        title: "CV 模板",
+        points: [
+          "Education：院校、专业、GPA、排名、核心课程。",
+          "Research Experience：课题、导师、方法、成果。",
+          "Project Experience：技术栈、架构、个人贡献、指标。",
+          "Internship：业务场景、工程产出、影响。",
+          "Publication / Competition：论文、竞赛、奖项。",
+          "Skills：编程语言、框架、数据库、云平台、工具。"
+        ]
+      },
+      {
+        title: "推荐信模板",
+        points: [
+          "教授推荐：课程排名、作业/项目表现、学术潜力。",
+          "导师推荐：科研贡献、问题定义、实验能力、论文/报告。",
+          "实习领导推荐：工程能力、协作、交付质量、职业成熟度。",
+          "素材包：CV、成绩单、PS 草稿、项目说明、申请项目列表。"
+        ]
+      }
+    ];
+
+    const regionFlows = [
+      { region: "欧洲大陆", system: "按国家/学校：Studielink、UniversityAdmissions、Studyinfo、学校网申、uni-assist 等", open: "多数 2026年秋至2027年初开放，项目差异很大", round1: "北欧/部分荷兰项目常在 12-1 月截止", round2: "德国、法国、意大利、爱尔兰按学校/项目 call", deadline: "必须按具体项目和国籍复核；非 EU 签证申请尽量提前", submission: "成绩单、课程描述、学位/在读证明、语言、CV、动机信、推荐信；部分要求 GRE/VPD/APS/summary sheet", rolling: "少数项目滚动，北欧常按统一截止后集中审理", early: "强烈建议提前做 ECTS/课程匹配和语言送分", offer: "通常数周至数月", visa: "以所在国学生居留/签证规则办理，注意资金证明、保险和住宿", note: "欧洲没有统一申请制度；同一国家不同学校的学费、语言豁免、申请平台和截止时间都可能不同。" },
+      { region: "香港", system: "各校自有申请系统", open: "通常 9-11 月陆续开放", round1: "早轮多在 10-12 月", round2: "主轮多在 1-3 月", deadline: "项目差异大，热门 CS/DS/AI 可能较早满位", submission: "网申上传，部分材料 offer 后补交", rolling: "很多项目滚动审理", early: "强烈建议早申请", offer: "2-12 周不等", visa: "学生签证/进入许可，拿 offer 后办理", note: "港校重视早申请、GPA、课程匹配、实习/科研。" },
+      { region: "新加坡", system: "NUS/NTU 自有申请系统", open: "通常前一年 10 月左右", round1: "部分项目有 early consideration", round2: "常见 1-3 月截止", deadline: "NUS/NTU 项目差异大", submission: "网申上传，语言/成绩送分按要求", rolling: "部分项目滚动或批次审理", early: "建议早申请", offer: "1-4 个月", visa: "Student Pass，入学前办理", note: "NUS/NTU 对背景匹配和课程基础要求高。" },
+      { region: "英国", system: "各校 postgraduate application portal", open: "通常 9-10 月开放", round1: "热门项目可能分轮或先到先审", round2: "多数持续至满位", deadline: "G5/热门 CS 很早满位", submission: "网申上传材料，推荐信系统提交", rolling: "多数滚动审理", early: "强烈建议 10-12 月完成主申", offer: "4-10 周常见", visa: "CAS 后申请 Student visa", note: "注意院校名单、均分 band、押金和语言条件。" },
+      { region: "澳大利亚", system: "学校官网或 agent portal", open: "常年或提前 1 年", round1: "按 Semester / Term", round2: "补录看名额", deadline: "通常开学前数月，热门项目提前", submission: "网申上传，部分可后补语言", rolling: "常见滚动审理", early: "建议早拿 offer 与 CoE", offer: "2-8 周常见", visa: "Subclass 500，需 CoE、OSHC、资金材料", note: "注意学分减免、学制、COE、OSHC 和签证排期。" },
+      { region: "澳门", system: "UM 研究生申请系统", open: "通常前一年末至当年春季", round1: "按 UM 公布为准", round2: "可能有补充轮", deadline: "需复核当年指南", submission: "网申上传，申请费 MOP200 级别", rolling: "以 UM 说明为准", early: "建议早申请", offer: "1-3 个月", visa: "按澳门高校入学与逗留手续办理", note: "澳门大学非 QS Top100，但区域成本与湾区资源可纳入稳妥选项。" }
+    ];
+
+    const detailedTimeline = [
+      { month: "2026年7月", tasks: "整理背景；确定学校名单；建立项目数据库；列出语言考试计划", output: "初版选校表、背景复盘、目标分数", risk: "不要只看 QS，必须核对课程先修和申请轮次" },
+      { month: "2026年8月", tasks: "IELTS/TOEFL 准备；科研项目整理；CV 第一版；补 GitHub/项目文档", output: "CV v1、项目经历 STAR 版本、语言模考记录", risk: "语言和文书并行推进，避免 10 月集中爆炸" },
+      { month: "2026年9月", tasks: "语言考试；联系推荐人；整理成绩单和在读证明；锁定 Reach/Match/Safety", output: "推荐人确认、成绩单申请、最终项目清单 v1", risk: "推荐信至少提前 4 周沟通" },
+      { month: "2026年10月", tasks: "完成 PS；完成 CV；开放项目开始提交；优先港新英冲刺项目", output: "PS 主模板、学校定制段落、已提交首批申请", risk: "不要用同一版 why school 复制所有学校" },
+      { month: "2026年11-12月", tasks: "提交香港、新加坡、英国项目；补充澳洲项目；跟进推荐信", output: "主申项目完成 70%+", risk: "热门项目可能提前满位，滚动审理越早越好" },
+      { month: "2027年1-3月", tasks: "补材料；面试准备；继续提交晚轮；跟进申请状态", output: "面试题库、补件记录、状态追踪表", risk: "语言条件未达标时同步准备补考" },
+      { month: "2027年4-5月", tasks: "比较 offer；评估学费、城市、课程、就业；缴押金", output: "offer 决策矩阵、预算表", risk: "注意押金截止、不可退规则和签证时间" },
+      { month: "2027年6-8月", tasks: "签证；住宿；体检/保险；行前准备；补交毕业材料", output: "签证材料、住宿合同、行前清单", risk: "COE/CAS/IANG/Student Pass 等流程按地区区分" }
+    ];
+
+    const heroTimeline = [
+      ["2026.07", "背景提升阶段"],
+      ["2026.08-2026.10", "语言考试准备"],
+      ["2026.09-2026.12", "准备文书材料"],
+      ["2026.10-2027.03", "提交申请"],
+      ["2027.03-2027.05", "等待 offer"],
+      ["2027.09", "入学"]
+    ];
+
+    function getTier(rank) {
+      if (rank <= 30) return "Reach 冲刺";
+      if (rank <= 70) return "Match 主申";
+      if (rank <= 100) return "Safety 保底";
+      return "Special 特别目标";
+    }
+
+    function tierClass(tier) {
+      if (tier.includes("Reach")) return "coral";
+      if (tier.includes("Match")) return "blue";
+      if (tier.includes("Safety")) return "green";
+      return "amber";
+    }
+
+    function allPrograms() {
+      return schoolData.flatMap(school => school.programs.map(p => ({ school, program: p })));
+    }
+
+    function fmtMoney(value, currency) {
+      if (value === 0) return "0";
+      if (!value) return "需复核";
+      return `${currency} ${Number(value).toLocaleString("zh-CN")}`;
+    }
+
+    function estimateRmb(fee) {
+      if (fee.tuitionTotal === null || fee.tuitionTotal === undefined) return null;
+      const rate = exchangeRates[fee.currency] || 1;
+      const living = (fee.livingAnnual || 0) * (fee.durationYears || 1);
+      const insurance = (fee.insuranceAnnual || 0) * (fee.durationYears || 1);
+      const total = (fee.tuitionTotal || 0) + living + (fee.applicationFee || 0) + (fee.visaFee || 0) + insurance;
+      return Math.round(total * rate);
+    }
+
+    function saveJson(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function readJson(key, fallback) {
+      try {
+        return JSON.parse(localStorage.getItem(key)) || fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function getStatusMap() {
+      return readJson("csApplyStatus", {});
+    }
+
+    function setProgramStatus(programId, status) {
+      const map = getStatusMap();
+      map[programId] = status;
+      saveJson("csApplyStatus", map);
+      renderAll();
+    }
+
+    function currentProgramsFiltered() {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const region = document.getElementById("regionFilter").value;
+      const tier = document.getElementById("tierFilter").value;
+      const rank = document.getElementById("rankFilter").value;
+      const track = document.getElementById("trackFilter").value;
+      const status = document.getElementById("statusFilter").value;
+      const statusMap = getStatusMap();
+
+      return schoolData.map(school => {
+        const schoolTier = getTier(school.qsRank);
+        const rankOk = rank === "all" ||
+          (rank === "1-30" && school.qsRank <= 30) ||
+          (rank === "31-70" && school.qsRank >= 31 && school.qsRank <= 70) ||
+          (rank === "71-100" && school.qsRank >= 71 && school.qsRank <= 100) ||
+          (rank === "100+" && school.qsRank > 100);
+        const schoolOk = (region === "all" || school.region === region) &&
+          (tier === "all" || schoolTier === tier) &&
+          rankOk;
+
+        const programs = school.programs.filter(p => {
+          const haystack = [school.nameCn, school.nameEn, school.region, p.nameCn, p.nameEn, p.college, p.tracks.join(" "), p.intro].join(" ").toLowerCase();
+          const statusOk = status === "all" || (statusMap[p.id] || "未开始") === status;
+          const trackOk = track === "all" || p.tracks.includes(track);
+          return schoolOk && statusOk && trackOk && (!q || haystack.includes(q));
+        });
+        return { school, programs };
+      }).filter(item => item.programs.length);
+    }
+
+    function populateFilters() {
+      const regions = ["all", ...new Set(schoolData.map(s => s.region))];
+      const tiers = ["all", "Reach 冲刺", "Match 主申", "Safety 保底", "Special 特别目标"];
+      const tracks = ["all", ...new Set(allPrograms().flatMap(x => x.program.tracks))].sort((a, b) => a === "all" ? -1 : a.localeCompare(b));
+      const statuses = ["all", ...statusOptions];
+      setOptions("regionFilter", regions, "全部地区");
+      setOptions("tierFilter", tiers, "全部梯度");
+      setOptions("trackFilter", tracks, "全部方向");
+      setOptions("statusFilter", statuses, "全部状态");
+    }
+
+    function setOptions(id, values, allLabel) {
+      const el = document.getElementById(id);
+      el.innerHTML = values.map(v => `<option value="${v}">${v === "all" ? allLabel : v}</option>`).join("");
+    }
+
+    function renderDashboard() {
+      document.getElementById("goalChips").innerHTML = [
+        `<span class="tag teal">申请季：${goals.season}</span>`,
+        ...goals.directions.map(x => `<span class="chip">${x}</span>`),
+        ...goals.regions.map(x => `<span class="tag blue">${x}</span>`)
+      ].join("");
+
+      const statusMap = getStatusMap();
+      const programs = allPrograms();
+      const completedMaterials = readJson("csMaterialChecklist", {});
+      const materialDone = Object.values(completedMaterials).filter(Boolean).length;
+      const submitted = programs.filter(x => ["已提交", "等待结果", "收到Offer", "拒绝"].includes(statusMap[x.program.id])).length;
+      const progress = Math.round(((submitted / Math.max(programs.length, 1)) * 0.55 + (materialDone / materialItems.length) * 0.45) * 100);
+      const metrics = [
+        ["目标学校数量", schoolData.length, "覆盖 QS Top100 重点地区 + 澳门大学"],
+        ["冲刺学校数量", schoolData.filter(s => getTier(s.qsRank).includes("Reach")).length, "QS 1-30"],
+        ["主申学校数量", schoolData.filter(s => getTier(s.qsRank).includes("Match")).length, "QS 30-70"],
+        ["保底学校数量", schoolData.filter(s => getTier(s.qsRank).includes("Safety")).length, "QS 70-100"],
+        ["已完成申请材料数量", `${materialDone}/${materialItems.length}`, "本机 checklist"],
+        ["当前准备进度", `${progress}%`, "按材料和提交状态估算"],
+        ["项目记录数量", programs.length, "每个专业单独记录"],
+        ["官方来源数量", sourceIndex.length, "持续维护复核"]
+      ];
+      document.getElementById("metrics").innerHTML = metrics.map(([label, value, note]) => `
+        <div class="card pad metric">
+          <span>${label}</span>
+          <b>${value}</b>
+          <small>${note}</small>
+        </div>
+      `).join("");
+
+      document.getElementById("heroTimeline").innerHTML = heroTimeline.map(([date, label]) => `
+        <div class="time-node"><strong>${date}</strong><span>${label}</span></div>
+      `).join("");
+    }
+
+    function renderSchoolCards() {
+      const statusMap = getStatusMap();
+      const data = currentProgramsFiltered();
+      const el = document.getElementById("schoolCards");
+      if (!data.length) {
+        el.innerHTML = `<div class="empty">没有匹配结果。请调整关键词或筛选条件。</div>`;
+        return;
+      }
+      el.innerHTML = data.map(({ school, programs }) => {
+        const tier = getTier(school.qsRank);
+        return `
+          <article class="card school-card">
+            <div>
+              <h4>${school.nameCn}</h4>
+              <p style="margin:4px 0 0;color:var(--muted);">${school.nameEn}</p>
+            </div>
+            <div class="meta">
+              <span class="tag ${tierClass(tier)}">${tier}</span>
+              <span class="tag blue">QS ${school.qsRank} (${school.qsYear})</span>
+              <span class="chip">${school.region}</span>
+            </div>
+            <div class="kv">
+              <dt>官网</dt><dd><a href="${school.website}" target="_blank" rel="noreferrer">学校官网</a> / <a href="${school.facultyWebsite}" target="_blank" rel="noreferrer">学院官网</a></dd>
+              <dt>申请建议</dt><dd>${school.tierNote}</dd>
+            </div>
+            <div class="program-list">
+              ${programs.map(p => `
+                <div class="program">
+                  <div class="program-head">
+                    <div>
+                      <h5>${p.nameCn}</h5>
+                      <p>${p.nameEn}</p>
+                    </div>
+                    <select class="status-select" onchange="setProgramStatus('${p.id}', this.value)">
+                      ${statusOptions.map(s => `<option value="${s}" ${(statusMap[p.id] || "未开始") === s ? "selected" : ""}>${s}</option>`).join("")}
+                    </select>
+                  </div>
+                  <div class="chips">${p.tracks.map(t => `<span class="chip">${t}</span>`).join("")}</div>
+                  <dl class="kv">
+                    <dt>学院</dt><dd>${p.college}</dd>
+                    <dt>介绍</dt><dd>${p.intro}</dd>
+                    <dt>培养方向</dt><dd>${p.tracks.join(" / ")}</dd>
+                    <dt>课程设置</dt><dd>${p.curriculum}</dd>
+                    <dt>学制</dt><dd>${p.duration}</dd>
+                    <dt>语言</dt><dd>${p.language}</dd>
+                    <dt>跨专业</dt><dd>${p.crossMajor}</dd>
+                    <dt>GRE/GMAT</dt><dd>${p.gre}；${p.gmat}</dd>
+                    <dt>科研/实习</dt><dd>科研：${p.research}；实习：${p.internship}</dd>
+                    <dt>项目链接</dt><dd><a href="${p.link}" target="_blank" rel="noreferrer">打开官方项目页</a></dd>
+                  </dl>
+                </div>
+              `).join("")}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderRequirementRows() {
+      const rows = currentProgramsFiltered().flatMap(({ school, programs }) => programs.map(p => {
+        const r = p.requirements;
+        return `
+          <tr>
+            <td><b>${school.nameCn}</b><br><span class="tag ${tierClass(getTier(school.qsRank))}">${getTier(school.qsRank)}</span></td>
+            <td><a href="${p.link}" target="_blank" rel="noreferrer">${p.nameCn}</a><br>${p.nameEn}</td>
+            <td>${r.background}</td>
+            <td>${r.minGpa}<br>${r.tier985211}<br>${r.non211}</td>
+            <td>${r.courses}<br><b>数学：</b>${r.math}<br><b>编程：</b>${r.programming}</td>
+            <td>${r.ielts}<br><b>豁免：</b>${r.waiver}</td>
+            <td><b>TOEFL：</b>${r.toefl}<br><b>PTE：</b>${r.pte}</td>
+            <td><b>GRE：</b>${r.gre}<br><b>GMAT：</b>${r.gmat}</td>
+            <td>${r.cross}</td>
+          </tr>
+        `;
+      }));
+      document.getElementById("requirementsRows").innerHTML = rows.join("") || `<tr><td colspan="9">没有匹配项目。</td></tr>`;
+    }
+
+    function renderFeeRows() {
+      const rows = currentProgramsFiltered().flatMap(({ school, programs }) => programs.map(p => {
+        const f = p.fee;
+        const rmb = estimateRmb(f);
+        const tuition = f.tuitionText || fmtMoney(f.tuitionTotal, f.currency);
+        return `
+          <tr>
+            <td><b>${school.nameCn}</b><br>QS ${school.qsRank} (${school.qsYear})</td>
+            <td><a href="${p.link}" target="_blank" rel="noreferrer">${p.nameCn}</a><br><span style="color:var(--muted);">${f.note}</span></td>
+            <td>${f.currency}</td>
+            <td>${tuition}</td>
+            <td>${fmtMoney(f.livingAnnual, f.currency)} / 年</td>
+            <td>${fmtMoney(f.accommodationAnnual, f.currency)} / 年</td>
+            <td>${fmtMoney(f.applicationFee, f.currency)}</td>
+            <td>签证 ${fmtMoney(f.visaFee, f.currency)}<br>保险 ${fmtMoney(f.insuranceAnnual, f.currency)} / 年</td>
+            <td>${rmb === null ? `<span style="color:var(--muted);">需复核：官网未给固定总学费</span>` : `<b>约 RMB ${rmb.toLocaleString("zh-CN")}</b><br><span style="color:var(--muted);">汇率 ${f.currency}=RMB ${exchangeRates[f.currency]}</span>`}</td>
+          </tr>
+        `;
+      }));
+      document.getElementById("feeRows").innerHTML = rows.join("") || `<tr><td colspan="9">没有匹配项目。</td></tr>`;
+    }
+
+    function renderEuropeTuition() {
+      const europeRegions = new Set(["瑞士", "德国", "法国", "荷兰", "比利时", "爱尔兰", "瑞典", "意大利", "丹麦", "芬兰"]);
+      const rows = schoolData
+        .filter(school => europeRegions.has(school.region))
+        .flatMap(school => school.programs.map(p => {
+          const f = p.fee;
+          const source = f.tuitionSource || (p.sources && p.sources[p.sources.length - 1]) || p.link;
+          const tuition = f.tuitionText || fmtMoney(f.tuitionTotal, f.currency);
+          const total = f.tuitionTotal === null || f.tuitionTotal === undefined ? "官网动态/需复核" : `${f.currency} ${Number(f.tuitionTotal).toLocaleString("zh-CN")}`;
+          return `
+            <tr>
+              <td>${school.region}</td>
+              <td><b>${school.nameCn}</b><br><span style="color:var(--muted);">${school.nameEn} · QS ${school.qsRank}</span></td>
+              <td><a href="${p.link}" target="_blank" rel="noreferrer">${p.nameCn}</a><br><span style="color:var(--muted);">${p.duration}</span></td>
+              <td>${tuition}</td>
+              <td><b>${total}</b></td>
+              <td>${f.note}</td>
+              <td><a href="${source}" target="_blank" rel="noreferrer">打开费用官网</a></td>
+            </tr>
+          `;
+        }));
+      document.getElementById("europeTuitionRows").innerHTML = rows.join("") || `<tr><td colspan="7">没有欧洲项目记录。</td></tr>`;
+    }
+
+    function renderMaterials() {
+      const checked = readJson("csMaterialChecklist", {});
+      document.getElementById("materialChecklist").innerHTML = materialItems.map(item => `
+        <label class="checkitem">
+          <input type="checkbox" ${checked[item.id] ? "checked" : ""} onchange="toggleMaterial('${item.id}', this.checked)">
+          <span><b>${item.name}</b><span>准备时间：${item.time}</span><span>注意事项：${item.note}</span></span>
+        </label>
+      `).join("");
+      document.getElementById("materialTips").innerHTML = materialItems.map(item => `
+        <div class="template" style="margin-bottom:9px;">
+          <b>${item.name}</b>
+          <p style="margin:4px 0 0;color:var(--muted);font-size:13px;">模板建议：${item.template}</p>
+        </div>
+      `).join("");
+    }
+
+    function toggleMaterial(id, value) {
+      const checked = readJson("csMaterialChecklist", {});
+      checked[id] = value;
+      saveJson("csMaterialChecklist", checked);
+      renderDashboard();
+    }
+
+    function renderWriting() {
+      document.getElementById("writingTemplates").innerHTML = writingTemplates.map(t => `
+        <div class="template">
+          <h4>${t.title}</h4>
+          <ol>${t.points.map(p => `<li>${p}</li>`).join("")}</ol>
+        </div>
+      `).join("");
+    }
+
+    function renderRegions() {
+      document.getElementById("regionCards").innerHTML = regionFlows.map(r => `
+        <div class="card pad">
+          <h4 style="margin:0 0 8px;">${r.region}申请流程</h4>
+          <dl class="kv">
+            <dt>申请系统</dt><dd>${r.system}</dd>
+            <dt>开放时间</dt><dd>${r.open}</dd>
+            <dt>第一轮</dt><dd>${r.round1}</dd>
+            <dt>第二轮</dt><dd>${r.round2}</dd>
+            <dt>截止日期</dt><dd>${r.deadline}</dd>
+            <dt>材料提交</dt><dd>${r.submission}</dd>
+            <dt>滚动录取</dt><dd>${r.rolling}</dd>
+            <dt>早申请</dt><dd>${r.early}</dd>
+            <dt>Offer周期</dt><dd>${r.offer}</dd>
+            <dt>签证流程</dt><dd>${r.visa}</dd>
+            <dt>注意事项</dt><dd>${r.note}</dd>
+          </dl>
+        </div>
+      `).join("");
+    }
+
+    function renderTimelineRows() {
+      document.getElementById("timelineRows").innerHTML = detailedTimeline.map(t => `
+        <tr>
+          <td><b>${t.month}</b></td>
+          <td>${t.tasks}</td>
+          <td>${t.output}</td>
+          <td>${t.risk}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderSources() {
+      document.getElementById("sourceRows").innerHTML = sourceIndex.map(s => `
+        <tr>
+          <td>${s.type}</td>
+          <td>${s.name}</td>
+          <td><a href="${s.url}" target="_blank" rel="noreferrer">${s.url}</a></td>
+          <td>${s.updated}</td>
+          <td>${s.note}</td>
+        </tr>
+      `).join("");
+    }
+
+    function saveProfile() {
+      const profile = {
+        school: document.getElementById("profileSchool").value,
+        major: document.getElementById("profileMajor").value,
+        gpa: document.getElementById("profileGpa").value,
+        rank: document.getElementById("profileRank").value,
+        ielts: document.getElementById("profileIelts").value,
+        toefl: document.getElementById("profileToefl").value,
+        research: document.getElementById("profileResearch").value,
+        experience: document.getElementById("profileExperience").value
+      };
+      saveJson("csApplicantProfile", profile);
+      renderProfileAnalysis();
+    }
+
+    function loadProfile() {
+      const p = readJson("csApplicantProfile", {});
+      document.getElementById("profileSchool").value = p.school || "";
+      document.getElementById("profileMajor").value = p.major || "";
+      document.getElementById("profileGpa").value = p.gpa || "";
+      document.getElementById("profileRank").value = p.rank || "";
+      document.getElementById("profileIelts").value = p.ielts || "";
+      document.getElementById("profileToefl").value = p.toefl || "";
+      document.getElementById("profileResearch").value = p.research || "";
+      document.getElementById("profileExperience").value = p.experience || "";
+    }
+
+    function renderProfileAnalysis() {
+      const p = readJson("csApplicantProfile", {});
+      const gpa = Number(p.gpa || 0);
+      const ielts = Number(p.ielts || 0);
+      const toefl = Number(p.toefl || 0);
+      const hasResearch = (p.research || "").trim().length > 20;
+      const exp = (p.experience || "").toLowerCase();
+      const hasInternship = /实习|intern|公司|工程|开发|算法/.test(exp);
+      const hasProject = /项目|project|github|系统|模型|平台/.test(exp);
+      let score = 35;
+      if (gpa >= 90 || (gpa > 0 && gpa >= 3.7)) score += 25;
+      else if (gpa >= 85 || (gpa > 0 && gpa >= 3.4)) score += 18;
+      else if (gpa >= 80 || (gpa > 0 && gpa >= 3.1)) score += 10;
+      else if (gpa > 0) score += 4;
+      if (ielts >= 7 || toefl >= 100) score += 15;
+      else if (ielts >= 6.5 || toefl >= 90) score += 10;
+      else if (ielts > 0 || toefl > 0) score += 4;
+      if (hasResearch) score += 10;
+      if (hasInternship) score += 8;
+      if (hasProject) score += 7;
+      score = Math.min(score, 100);
+
+      const risks = [];
+      if (!gpa) risks.push(["warn", "GPA 未填写：无法判断 Reach/Match/Safety 的真实可行性。"]);
+      else if (!(gpa >= 85 || gpa >= 3.4)) risks.push(["warn", "GPA 风险：港新英顶尖 CS/AI 项目通常需要更强成绩支撑。"]);
+      if (!(ielts >= 6.5 || toefl >= 90)) risks.push(["warn", "语言风险：建议尽快达到 IELTS 6.5+/TOEFL 90+，冲刺项目按 7.0+/100+ 准备。"]);
+      if (!hasResearch) risks.push(["warn", "科研不足：AI/ML/CS 强校会看重研究或高质量项目经历。"]);
+      if (!hasInternship) risks.push(["warn", "实习不足：软件工程、数据科学、网络安全方向建议补工程化实习或可展示项目。"]);
+      if (!hasProject) risks.push(["warn", "项目展示不足：建议整理 2-3 个 GitHub/Demo/技术文档完整的代表项目。"]);
+      if (!risks.length) risks.push(["ok", "当前背景输入较完整，可开始按 Reach/Match/Safety 分批定制申请材料。"]);
+
+      const band = score >= 82 ? "可主攻 QS 1-30 + 30-70" : score >= 68 ? "以 QS 30-70 为主，搭配 1-30 冲刺" : "以 QS 70-100 与澳洲/澳门稳妥项目为基础";
+
+      document.getElementById("profileAnalysis").innerHTML = `
+        <div class="score">
+          <div>
+            <strong>竞争力估算</strong>
+            <p style="margin:4px 0 0;color:var(--muted);">基于 GPA、语言、科研、实习、项目的规划模型</p>
+          </div>
+          <b>${score}</b>
+        </div>
+        <div class="risk ok"><b>梯度建议：</b>${band}</div>
+        ${risks.map(([cls, text]) => `<div class="risk ${cls}">${text}</div>`).join("")}
+      `;
+    }
+
+    function renderAll() {
+      renderDashboard();
+      renderSchoolCards();
+      renderRequirementRows();
+      renderFeeRows();
+      renderEuropeTuition();
+      renderMaterials();
+      renderWriting();
+      renderRegions();
+      renderTimelineRows();
+      renderSources();
+      renderProfileAnalysis();
+    }
+
+    function bindEvents() {
+      ["searchInput", "regionFilter", "tierFilter", "rankFilter", "trackFilter", "statusFilter"].forEach(id => {
+        document.getElementById(id).addEventListener("input", () => {
+          renderSchoolCards();
+          renderRequirementRows();
+          renderFeeRows();
+        });
+      });
+      document.getElementById("resetFilters").addEventListener("click", () => {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("regionFilter").value = "all";
+        document.getElementById("tierFilter").value = "all";
+        document.getElementById("rankFilter").value = "all";
+        document.getElementById("trackFilter").value = "all";
+        document.getElementById("statusFilter").value = "all";
+        renderSchoolCards();
+        renderRequirementRows();
+        renderFeeRows();
+      });
+      document.getElementById("saveProfile").addEventListener("click", saveProfile);
+      ["profileSchool", "profileMajor", "profileGpa", "profileRank", "profileIelts", "profileToefl", "profileResearch", "profileExperience"].forEach(id => {
+        document.getElementById(id).addEventListener("input", () => {
+          saveProfile();
+        });
+      });
+    }
+
+    populateFilters();
+    loadProfile();
+    bindEvents();
+    renderAll();
+  </script>
+</body>
+</html>
+
